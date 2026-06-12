@@ -227,7 +227,7 @@ Relance le même appel deux fois : le texte varie (le LLM n'est pas déterminist
 3. **Change de fournisseur** : bascule sur Ollama et vérifie que les deux endpoints fonctionnent sans modifier le Java.
 4. **Baisse la température** à 0.2 pour `/analyze` et compare la stabilité des réponses.
 
-## 9. Pour aller plus loin (dans l'ordre) — ✅ implémenté
+## 9. Pour aller plus loin (dans l'ordre) — implémenté
 
 Les quatre extensions sont implémentées, chacune dans son propre package, sans toucher aux endpoints existants. Chaque étape réutilise exactement le `ChatClient` de la section 3 — la lecture des classes (très commentées) fait partie de l'exercice.
 

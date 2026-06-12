@@ -280,4 +280,4 @@ curl -X POST http://localhost:8080/chat/tools \
 # → l'heure réelle. Compare avec /chat, qui n'a pas l'outil.
 ```
 
-Rappel honnête : llama3.2 (3 Mds de paramètres) fait tourner tout ça sur un laptop, mais reste approximatif — réponses RAG parfois incomplètes, formulations maladroites. Les mécanismes, eux, sont identiques avec un modèle hébergé : rebascule `spring.ai.model.chat` (et `embedding`) sur `openai` pour comparer.
+Pour rappel : llama3.2 (3 Mds de paramètres) fait tourner tout ça sur un laptop, mais reste approximatif — réponses RAG parfois incomplètes, formulations maladroites. Les mécanismes, eux, sont identiques avec un modèle hébergé : rebascule `spring.ai.model.chat` (et `embedding`) sur `openai` pour comparer.

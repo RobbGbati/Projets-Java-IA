@@ -1,0 +1,19 @@
+# PostgreSQL avec l'extension pgvector préinstallée (image officielle pgvector).
+# Démarré automatiquement par spring-boot-docker-compose au lancement du job
+# (ou à la main : docker compose up -d).
+# Le volume nommé rend la base PERSISTANTE entre les exécutions : c'est tout
+# l'intérêt par rapport au SimpleVectorStore en mémoire de spring-ai-demo.
+services:
+  postgres:
+    image: 'pgvector/pgvector:pg17'
+    environment:
+      POSTGRES_DB: 'ragdb'
+      POSTGRES_USER: 'rag'
+      POSTGRES_PASSWORD: 'ragpwd'
+    ports:
+      - '5432:5432'
+    volumes:
+      - 'pgdata:/var/lib/postgresql/data'
+
+volumes:
+  pgdata:

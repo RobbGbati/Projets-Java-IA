@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- ════════════════════════════════════════════════════════════════
+	     Mêmes versions que spring-ai-demo : Boot 3.5.x + Spring AI 1.1.7
+	     stable. Le squelette généré partait sur Boot 4.1 + Spring AI
+	     2.0.0-RC2 : une Release Candidate, APIs encore mouvantes — pour
+	     un projet d'étude on reste aligné sur le stable déjà maîtrisé.
+	     Aligner les deux projets garantit aussi que ce que ce batch écrit
+	     dans PGVector est relisible par n'importe quelle app Spring AI 1.1.
+	     ════════════════════════════════════════════════════════════════ -->
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.5.6</version>
+		<relativePath/>
+	</parent>
+
+	<groupId>com.misterbil</groupId>
+	<artifactId>ragbatch</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>ragbatch</name>
+	<description>Job d'ingestion RAG : fichiers → chunks → embeddings → PGVector</description>
+
+	<properties>
+		<java.version>21</java.version>
+		<spring-ai.version>1.1.7</spring-ai.version>
+	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.ai</groupId>
+				<artifactId>spring-ai-bom</artifactId>
+				<version>${spring-ai.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<!-- ══════════════════════════════════════════════════════════════
+		     SPRING BATCH — le framework de traitement par lots.
+		     Apporte Job/Step, le pattern reader → processor → writer,
+		     la reprise sur erreur et les tables de MÉTADONNÉES (BATCH_*)
+		     qui historisent chaque exécution. C'est le vrai pattern
+		     d'entreprise pour une ingestion : pas un main() qui boucle.
+		     Note : PAS de starter-web ici. Ce projet n'est pas un serveur,
+		     c'est un job : il démarre, traite, et S'ARRÊTE.
+		     ══════════════════════════════════════════════════════════════ -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-batch</artifactId>
+		</dependency>
+
+		<!-- ══════════════════════════════════════════════════════════════
+		     PGVECTOR — le vector store PERSISTANT.
+		     PostgreSQL + extension `vector` : les embeddings deviennent
+		     une colonne de table, et la recherche de similarité une
+		     requête SQL (ORDER BY embedding <=> ? LIMIT k).
+		     Le starter auto-configure un bean VectorStore (interface
+		     IDENTIQUE au SimpleVectorStore de spring-ai-demo : on change
+		     d'adapter, pas de code) et peut créer le schéma tout seul
+		     (initialize-schema dans application.yaml).
+		     ══════════════════════════════════════════════════════════════ -->
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-starter-vector-store-pgvector</artifactId>
+		</dependency>
+
+		<!-- Modèle d'EMBEDDINGS via Ollama (nomic-embed-text, comme la
+		     démo — OBLIGATOIREMENT le même modèle que celui qui servira
+		     à interroger la base : des vecteurs issus de modèles
+		     différents ne sont pas comparables).
+		     Ce projet n'a pas besoin de modèle de CHAT : il est désactivé
+		     dans application.yaml (spring.ai.model.chat: none). -->
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-starter-model-ollama</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Confort de dev : au démarrage, Spring Boot lance lui-même
+		     `docker compose up` sur le compose.yaml du projet (PostgreSQL
+		     + pgvector), et attend que la base soit prête. Docker Desktop
+		     doit tourner. En prod, cette dépendance n'existe pas : la
+		     base est déjà là. -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-docker-compose</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.batch</groupId>
+			<artifactId>spring-batch-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

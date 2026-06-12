@@ -1,0 +1,76 @@
+# ══════════════════════════════════════════════════════════════════════
+# CONFIGURATION DU JOB D'INGESTION
+# ══════════════════════════════════════════════════════════════════════
+spring:
+  application:
+    name: ragbatch
+
+  main:
+    # Ce projet n'est PAS un serveur : pas de Tomcat, pas de port.
+    # Indispensable aussi parce que Spring AI tire reactor-core, ce qui
+    # ferait croire à Boot qu'on est une app web réactive (et planterait,
+    # faute de serveur réactif). Un batch démarre, traite, s'arrête.
+    web-application-type: none
+
+  docker:
+    compose:
+      lifecycle-management: start-only
+      # Par défaut, Boot arrête le compose quand l'application se termine.
+      # Or tout l'intérêt de ce batch est que la base SURVIVE au job pour
+      # être interrogée ensuite. start-only : démarre si besoin, ne
+      # touche à rien en sortie. Arrêt manuel : docker compose down.
+
+  # ────────────────────────────────────────────────────────────────────
+  # POSTGRESQL — une seule base pour DEUX usages :
+  #  1. la table vector_store (les chunks + embeddings, créée par Spring AI)
+  #  2. les tables BATCH_* (métadonnées Spring Batch : historique des
+  #     exécutions, statuts, reprises)
+  # Identifiants alignés sur compose.yaml. spring-boot-docker-compose
+  # saurait les déduire tout seul, mais les écrire rend les choses
+  # explicites — et c'est ce qu'il faudrait faire sans Docker Compose.
+  # ────────────────────────────────────────────────────────────────────
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ragdb
+    username: rag
+    password: ragpwd
+
+  batch:
+    jdbc:
+      # Crée les tables BATCH_* au premier démarrage. En prod : script
+      # SQL versionné (Flyway/Liquibase) plutôt que "always".
+      initialize-schema: always
+
+  ai:
+    model:
+      # Ce job n'utilise QUE des embeddings : pas de modèle de chat.
+      # "none" désactive l'auto-configuration ChatModel du starter Ollama.
+      chat: none
+      embedding: ollama
+
+    ollama:
+      base-url: http://localhost:11434
+      embedding:
+        options:
+          # IMPÉRATIF : même modèle d'embeddings que l'application qui
+          # interrogera la base. Vecteurs de modèles différents = espaces
+          # incomparables, la recherche renverrait du bruit.
+          model: nomic-embed-text
+
+    vectorstore:
+      pgvector:
+        # Crée la table vector_store + l'extension vector + l'index.
+        initialize-schema: true
+        # Dimension des vecteurs de nomic-embed-text. Doit correspondre
+        # au modèle : une colonne vector(768) ne stocke pas du 1536.
+        dimensions: 768
+        # Index HNSW : recherche approximative rapide ; cosinus = la
+        # mesure de similarité standard pour les embeddings de texte.
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
+
+# Dossier des documents sources, EXTERNE au jar : un batch d'ingestion
+# lit des fichiers déposés quelque part (ici ./docs), pas ses propres
+# resources. Surchargeable au lancement :
+#   java -jar ragbatch.jar --app.sources=file:/data/docs/*.md
+app:
+  sources: "file:docs/*.md"

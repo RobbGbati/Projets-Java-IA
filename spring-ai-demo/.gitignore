@@ -1,5 +1,9 @@
 target/
-.idea/
 *.iml
 .vscode/
 .env
+.idea/
+/misc.xml
+.DS_Store
+# Cache du vector store (embeddings sérialisés) — régénérable, jamais versionné
+data/

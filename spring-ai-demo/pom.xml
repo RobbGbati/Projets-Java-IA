@@ -92,6 +92,27 @@
       <artifactId>spring-ai-starter-model-ollama</artifactId>
     </dependency>
 
+    <!-- ══════════════════════════════════════════════════════════════
+         RAG — Retrieval Augmented Generation (point 9.3 du README)
+         Deux briques, toujours sans version grâce au BOM :
+         1. spring-ai-vector-store : fournit SimpleVectorStore, un vector
+            store EN MÉMOIRE. Parfait pour apprendre : zéro infra (pas de
+            PGVector, Chroma, etc.), mais la même interface VectorStore
+            que les vrais. Passer en prod = changer de dépendance, pas
+            de code. Encore le pattern port/adapter.
+         2. spring-ai-advisors-vector-store : fournit QuestionAnswerAdvisor,
+            l'advisor qui fait la boucle RAG complète (recherche de
+            similarité + injection des documents dans le prompt).
+         ══════════════════════════════════════════════════════════════ -->
+    <dependency>
+      <groupId>org.springframework.ai</groupId>
+      <artifactId>spring-ai-vector-store</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.ai</groupId>
+      <artifactId>spring-ai-advisors-vector-store</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>

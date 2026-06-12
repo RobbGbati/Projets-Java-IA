@@ -18,6 +18,10 @@ spring:
     # ────────────────────────────────────────────────────────────────────
     model:
       chat: ollama
+      # Même sélecteur pour le modèle d'EMBEDDINGS (utilisé par le RAG).
+      # Sans cette ligne, les deux starters tenteraient chacun de créer
+      # un bean EmbeddingModel → conflit au démarrage.
+      embedding: ollama
 
     openai:
       # JAMAIS de clé en dur dans un fichier versionné.
@@ -40,6 +44,13 @@ spring:
           # Modèle léger qui tourne sur un laptop (~2 Go).
           # Télécharge-le d'abord : ollama pull llama3.2
           model: llama3.2
+      embedding:
+        options:
+          # Modèle d'EMBEDDINGS pour le RAG : transforme un texte en
+          # vecteur de nombres. Ce n'est PAS un modèle de chat — il est
+          # petit (~270 Mo) et spécialisé dans la similarité sémantique.
+          # Télécharge-le d'abord : ollama pull nomic-embed-text
+          model: nomic-embed-text
 
 # ──────────────────────────────────────────────────────────────────────
 # OBSERVABILITÉ PÉDAGOGIQUE

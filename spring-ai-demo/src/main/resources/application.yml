@@ -1,0 +1,52 @@
+# ══════════════════════════════════════════════════════════════════════
+# CONFIGURATION SPRING AI
+#
+# Toute l'intégration LLM se pilote ici. Le code Java ne contient ni URL,
+# ni clé, ni nom de modèle : changer de fournisseur = changer ce fichier.
+# ══════════════════════════════════════════════════════════════════════
+spring:
+  application:
+    name: spring-ai-demo
+
+  ai:
+    # ────────────────────────────────────────────────────────────────────
+    # SÉLECTEUR DE FOURNISSEUR
+    # Les deux starters (OpenAI + Ollama) sont dans le pom. Cette propriété
+    # indique lequel activer : un seul bean ChatModel sera créé.
+    #   openai → API OpenAI (clé requise)
+    #   ollama → modèle local via Ollama (aucune clé)
+    # ────────────────────────────────────────────────────────────────────
+    model:
+      chat: ollama
+
+    openai:
+      # JAMAIS de clé en dur dans un fichier versionné.
+      # ${OPENAI_API_KEY} lit la variable d'environnement au démarrage.
+      api-key: ${OPENAI_API_KEY}
+      chat:
+        options:
+          # Modèle économique et largement suffisant pour ce projet
+          model: gpt-4o-mini
+          # Température : 0 = déterministe, 1 = créatif.
+          # 0.7 pour le chat ; pour de l'extraction structurée pure,
+          # tu pourrais descendre vers 0.2.
+          temperature: 0.7
+
+    ollama:
+      # URL par défaut du serveur Ollama local
+      base-url: http://localhost:11434
+      chat:
+        options:
+          # Modèle léger qui tourne sur un laptop (~2 Go).
+          # Télécharge-le d'abord : ollama pull llama3.2
+          model: llama3.2
+
+# ──────────────────────────────────────────────────────────────────────
+# OBSERVABILITÉ PÉDAGOGIQUE
+# Décommente pour voir les prompts réellement envoyés au LLM — notamment
+# le schéma JSON que Spring AI injecte pour la sortie structurée.
+# C'est le meilleur moyen de comprendre ce que le framework fait pour toi.
+# ──────────────────────────────────────────────────────────────────────
+logging:
+  level:
+    org.springframework.ai: DEBUG

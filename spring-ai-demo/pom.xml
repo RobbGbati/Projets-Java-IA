@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       PARENT : Spring Boot
+       Comme dans n'importe quel projet Spring Boot, le parent gère :
+       - les versions cohérentes de toutes les dépendances Spring
+       - la configuration du plugin de build (jar exécutable)
+       Spring AI 1.1.x est compatible avec Spring Boot 3.4 / 3.5.
+       ════════════════════════════════════════════════════════════════ -->
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.5.6</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>com.misterbil</groupId>
+  <artifactId>spring-ai-demo</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>spring-ai-demo</name>
+  <description>Mini-projet pédagogique : intégrer un LLM dans un backend Spring Boot avec Spring AI</description>
+
+  <properties>
+    <!-- Java 17 minimum (exigé par Spring Boot 3.x). Java 21 fonctionne aussi. -->
+    <java.version>17</java.version>
+    <!-- Version de Spring AI : dernière version STABLE de la branche 1.1.x (juin 2026).
+         La 2.0 existe en Release Candidate mais n'est pas encore GA :
+         pour apprendre, on reste sur du stable. -->
+    <spring-ai.version>1.1.7</spring-ai.version>
+  </properties>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       BOM (Bill of Materials) Spring AI
+       Le BOM est un "catalogue de versions" : on l'importe une fois,
+       et ensuite TOUTES les dépendances org.springframework.ai sont
+       déclarées SANS numéro de version. C'est le BOM qui garantit que
+       les modules Spring AI sont compatibles entre eux.
+       Même principe que le BOM Spring Cloud que tu as peut-être déjà vu.
+       ════════════════════════════════════════════════════════════════ -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.ai</groupId>
+        <artifactId>spring-ai-bom</artifactId>
+        <version>${spring-ai.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- Le classique : Spring MVC + Tomcat embarqué pour exposer nos endpoints REST -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         STARTER SPRING AI — OpenAI
+         Ce starter apporte :
+         1. le client HTTP bas niveau vers l'API OpenAI (auth, retry, etc.)
+         2. l'implémentation OpenAiChatModel de l'interface ChatModel
+         3. l'AUTO-CONFIGURATION : Spring lit tes propriétés
+            spring.ai.openai.* et crée les beans tout seul.
+         Tu n'écris JAMAIS de code HTTP vers l'API du LLM : c'est
+         exactement ce que Spring AI abstrait.
+         ══════════════════════════════════════════════════════════════ -->
+    <dependency>
+      <groupId>org.springframework.ai</groupId>
+      <artifactId>spring-ai-starter-model-openai</artifactId>
+    </dependency>
+
+    <!-- ══════════════════════════════════════════════════════════════
+         STARTER SPRING AI — Ollama (alternative SANS clé API)
+         Même principe, mais pointe vers un Ollama local
+         (http://localhost:11434). On embarque les DEUX starters et on
+         choisit le fournisseur actif via la propriété
+         spring.ai.model.chat (voir application.yml).
+         C'est la grande promesse de Spring AI : le fournisseur est un
+         DÉTAIL DE CONFIGURATION, ton code métier ne change pas.
+         Le parallèle avec ce que tu connais : ChatModel est le "port",
+         OpenAI/Ollama sont les "adapters". Architecture hexagonale,
+         appliquée par le framework lui-même.
+         ══════════════════════════════════════════════════════════════ -->
+    <dependency>
+      <groupId>org.springframework.ai</groupId>
+      <artifactId>spring-ai-starter-model-ollama</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>

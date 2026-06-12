@@ -30,9 +30,13 @@ spring-ai-demo/
     │   │   └── ChatClientConfig.java        ← le bean ChatClient + system prompt
     │   ├── chat/
     │   │   └── ChatController.java          ← Endpoint 1 : POST /chat
-    │   └── analysis/
-    │       ├── ReviewAnalysisController.java ← Endpoint 2 : POST /analyze
-    │       └── ReviewAnalysis.java          ← le contrat de sortie typé
+    │   ├── analysis/
+    │   │   ├── ReviewAnalysisController.java ← Endpoint 2 : POST /analyze
+    │   │   └── ReviewAnalysis.java          ← le contrat de sortie typé
+    │   ├── streaming/                       ← 9.1 : POST /chat/stream (SSE)
+    │   ├── memory/                          ← 9.2 : POST /chat/memory
+    │   ├── rag/                             ← 9.3 : POST /rag (vector store)
+    │   └── tools/                           ← 9.4 : POST /chat/tools (@Tool)
     └── resources/
         └── application.yml                  ← TOUTE la config LLM est ici
 ```
@@ -223,11 +227,57 @@ Relance le même appel deux fois : le texte varie (le LLM n'est pas déterminist
 3. **Change de fournisseur** : bascule sur Ollama et vérifie que les deux endpoints fonctionnent sans modifier le Java.
 4. **Baisse la température** à 0.2 pour `/analyze` et compare la stabilité des réponses.
 
-## 9. Pour aller plus loin (dans l'ordre)
+## 9. Pour aller plus loin (dans l'ordre) — ✅ implémenté
 
-1. **Streaming** : remplace `.call()` par `.stream()` et renvoie un `Flux<String>` en SSE.
-2. **Mémoire de conversation** : advisors `ChatMemory` pour un chat multi-tours.
-3. **RAG** : ajoute `spring-ai-starter-vector-store-*` + un modèle d'embeddings, ingère quelques documents, et laisse le LLM répondre à partir de TES données.
-4. **Tool calling** : expose des méthodes Java que le LLM peut décider d'appeler.
+Les quatre extensions sont implémentées, chacune dans son propre package, sans toucher aux endpoints existants. Chaque étape réutilise exactement le `ChatClient` de la section 3 — la lecture des classes (très commentées) fait partie de l'exercice.
 
-Chaque étape réutilise exactement le `ChatClient` que tu maîtrises maintenant.
+Prérequis supplémentaire pour le RAG : `ollama pull nomic-embed-text` (modèle d'embeddings, ~270 Mo, distinct du modèle de chat).
+
+### 9.1 Streaming — `streaming/StreamingChatController`
+
+`.stream()` au lieu de `.call()` : la réponse arrive token par token en SSE, comme l'interface de ChatGPT. Le `-N` désactive le buffering de curl.
+
+```bash
+curl -N -X POST http://localhost:8080/chat/stream \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Compte de 1 à 10 en toutes lettres."}'
+```
+
+### 9.2 Mémoire de conversation — `memory/MemoryChatController`
+
+`MessageChatMemoryAdvisor` recharge l'historique avant chaque appel et l'enrichit après. Le `conversationId` isole les sessions, comme un cookie de session HTTP.
+
+```bash
+curl -X POST http://localhost:8080/chat/memory \
+  -H "Content-Type: application/json" \
+  -d '{"conversationId": "demo-1", "message": "Je m'\''appelle Bil."}'
+
+curl -X POST http://localhost:8080/chat/memory \
+  -H "Content-Type: application/json" \
+  -d '{"conversationId": "demo-1", "message": "Quel est mon prénom ?"}'
+# → "Bil". Refais l'appel avec "demo-2" : il ne sait plus.
+```
+
+### 9.3 RAG — `rag/RagConfig` + `rag/RagController`
+
+Un `SimpleVectorStore` en mémoire ingère au démarrage quatre documents sur une entreprise FICTIVE (TechNova) ; `QuestionAnswerAdvisor` fait la recherche de similarité et injecte les documents dans le prompt. Les faits étant inventés, une réponse correcte ne peut venir que du vector store.
+
+```bash
+curl -X POST http://localhost:8080/rag \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Quelle est la politique de retour TechNova ?"}'
+# → "45 jours avec le code RETOUR-45"
+```
+
+### 9.4 Tool calling — `tools/TimeTools` + `tools/ToolChatController`
+
+Des méthodes Java annotées `@Tool` que le LLM peut décider d'appeler. L'heure est le test parfait : un LLM sans outil ne peut pas la connaître.
+
+```bash
+curl -X POST http://localhost:8080/chat/tools \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Quelle heure est-il, précisément ?"}'
+# → l'heure réelle. Compare avec /chat, qui n'a pas l'outil.
+```
+
+Rappel honnête : llama3.2 (3 Mds de paramètres) fait tourner tout ça sur un laptop, mais reste approximatif — réponses RAG parfois incomplètes, formulations maladroites. Les mécanismes, eux, sont identiques avec un modèle hébergé : rebascule `spring.ai.model.chat` (et `embedding`) sur `openai` pour comparer.

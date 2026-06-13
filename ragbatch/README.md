@@ -65,4 +65,9 @@ docker exec ragbatch-postgres-1 psql -U rag -d ragdb \
 1. **Ajoute un fichier** dans `docs/`, relance le job : il est ingéré sans toucher au code.
 2. **Casse la vérification** : vide `docs/` et relance — observe le job FAILED et son statut dans `BATCH_*`.
 3. **Ingestion incrémentale** : remplace la purge totale par une suppression ciblée des chunks dont le `metadata->>'source'` correspond aux fichiers ré-ingérés.
-4. **Branche un client** : pointe le `/rag` d'une app Spring AI sur cette base (starter pgvector + même config embeddings) — le code contrôleur de `spring-ai-demo` fonctionne tel quel, seule la config change.
+4. **Branche un client** ✅ *fait* : le `/rag` de `spring-ai-demo` lit cette base via son profil `pgvector`. Le `RagController` n'a pas changé (il dépend de l'interface `VectorStore`) ; seuls le profil et la config diffèrent. Voir la section 9.3 de `../spring-ai-demo/README.md` →
+   ```bash
+   cd ../spring-ai-demo && mvn spring-boot:run -Dspring-boot.run.profiles=pgvector
+   curl -X POST http://localhost:8080/rag -H "Content-Type: application/json" \
+     -d '{"question": "Quel est le prix du NovaBook Pro 16 ?"}'   # → 1 999 €
+   ```

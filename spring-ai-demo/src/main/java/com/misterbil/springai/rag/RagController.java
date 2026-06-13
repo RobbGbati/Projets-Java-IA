@@ -3,7 +3,7 @@ package com.misterbil.springai.rag;
 import com.misterbil.springai.dtos.ChatAnswer;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
-import org.springframework.ai.vectorstore.SimpleVectorStore;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +31,18 @@ import org.springframework.web.bind.annotation.RestController;
  * Même logique que pour la mémoire : advisor passé PAR REQUÊTE, le RAG
  * ne s'applique qu'à cet endpoint.
  *
+ * ─── Le contrôleur ne sait pas D'OÙ viennent les documents ──────────────
+ * Il dépend de l'INTERFACE VectorStore, pas d'une implémentation. Selon
+ * le profil Spring actif, Spring injecte ici :
+ *   - profil par défaut : un SimpleVectorStore en mémoire (RagConfig),
+ *     alimenté au démarrage depuis les fichiers du classpath ;
+ *   - profil "pgvector" : un PgVectorStore branché sur la base
+ *     PostgreSQL alimentée par le projet ragbatch.
+ * Pas une ligne à changer ici pour passer de l'un à l'autre : c'est le
+ * même pattern port/adapter que ChatModel (OpenAI/Ollama). Lance avec
+ *   mvn spring-boot:run -Dspring-boot.run.profiles=pgvector
+ * (la base ragbatch doit tourner — voir ragbatch/README.md).
+ *
  * Test (fait inventé, donc réponse impossible sans le vector store) :
  *   curl -X POST http://localhost:8080/rag \
  *     -H "Content-Type: application/json" \
@@ -45,7 +57,7 @@ public class RagController {
     private final ChatClient chatClient;
     private final QuestionAnswerAdvisor ragAdvisor;
 
-    public RagController(ChatClient chatClient, SimpleVectorStore vectorStore) {
+    public RagController(ChatClient chatClient, VectorStore vectorStore) {
         this.chatClient = chatClient;
         this.ragAdvisor = QuestionAnswerAdvisor.builder(vectorStore).build();
     }

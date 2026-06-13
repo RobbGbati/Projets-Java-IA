@@ -269,6 +269,24 @@ curl -X POST http://localhost:8080/rag \
 # → "45 jours avec le code RETOUR-45"
 ```
 
+#### Variante : RAG sur base persistante (profil `pgvector`)
+
+Le même endpoint `/rag` peut lire une base **PostgreSQL + pgvector** alimentée par le projet voisin `ragbatch`, au lieu du `SimpleVectorStore` en mémoire. C'est l'architecture de production : un job d'ingestion séparé écrit dans la base, l'application se contente de lire. Le `RagController` ne change pas — il dépend de l'interface `VectorStore`, et le profil Spring choisit l'implémentation injectée (même pattern port/adapter que `ChatModel`).
+
+```bash
+# 1. la base ragbatch tourne et a été alimentée (voir ../ragbatch/README.md)
+# 2. lancer la démo avec le profil pgvector :
+mvn spring-boot:run -Dspring-boot.run.profiles=pgvector
+
+curl -X POST http://localhost:8080/rag \
+  -H "Content-Type: application/json" \
+  -d '{"question": "Quel est le prix du NovaBook Pro 16 ?"}'
+# → "1 999 €" — un fait présent UNIQUEMENT dans le corpus ragbatch,
+#   preuve que la réponse vient bien de la base externe.
+```
+
+Sans ce profil, rien ne change : le projet garde son store en mémoire et ne touche aucune base (l'auto-configuration JDBC/pgvector est désactivée hors profil `pgvector`).
+
 ### 9.4 Tool calling — `tools/TimeTools` + `tools/ToolChatController`
 
 Des méthodes Java annotées `@Tool` que le LLM peut décider d'appeler. L'heure est le test parfait : un LLM sans outil ne peut pas la connaître.

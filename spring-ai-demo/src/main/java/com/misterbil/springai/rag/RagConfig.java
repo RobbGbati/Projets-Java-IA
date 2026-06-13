@@ -11,6 +11,7 @@ import org.springframework.ai.vectorstore.SimpleVectorStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 
 /**
@@ -60,8 +61,16 @@ import org.springframework.core.io.Resource;
  * data/vectorstore.json existe. Supprime ce fichier pour ré-ingérer.
  * (Et si tu changes de modèle d'embeddings, supprime-le aussi : des
  * vecteurs issus de modèles différents ne sont pas comparables.)
+ *
+ * ─── @Profile("!pgvector") ──────────────────────────────────────────────
+ * Cette configuration n'est active QUE hors du profil "pgvector". Avec
+ * le profil pgvector, ce bean disparaît et c'est le PgVectorStore
+ * auto-configuré (branché sur la base ragbatch) qui prend sa place,
+ * injecté dans RagController via l'interface VectorStore. Aucun des deux
+ * mondes n'interfère avec l'autre.
  */
 @Configuration
+@Profile("!pgvector")
 public class RagConfig {
 
     private static final File CACHE = new File("data/vectorstore.json");

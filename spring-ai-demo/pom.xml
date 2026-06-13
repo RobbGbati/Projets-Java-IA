@@ -113,6 +113,29 @@
       <artifactId>spring-ai-advisors-vector-store</artifactId>
     </dependency>
 
+    <!-- ══════════════════════════════════════════════════════════════
+         RAG SUR BASE PERSISTANTE — PGVector (exercice 4 de ragbatch)
+         Adapter PERSISTANT de la même interface VectorStore. Branche le
+         /rag sur la base PostgreSQL alimentée par le projet ragbatch :
+         le job écrit les chunks, cette application les lit. Les fichiers
+         sources ne sont JAMAIS relus côté application.
+         Activation par le profil Spring "pgvector" UNIQUEMENT (voir
+         application.yml). Sans ce profil, le projet garde son
+         SimpleVectorStore en mémoire et ne touche aucune base : ces
+         dépendances dorment. C'est tout l'intérêt du pattern adapter —
+         on ajoute un fournisseur sans rien retirer.
+         postgresql : le driver JDBC, seulement à l'exécution.
+         ══════════════════════════════════════════════════════════════ -->
+    <dependency>
+      <groupId>org.springframework.ai</groupId>
+      <artifactId>spring-ai-starter-vector-store-pgvector</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>

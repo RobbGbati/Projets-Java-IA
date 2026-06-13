@@ -61,3 +61,61 @@ spring:
 logging:
   level:
     org.springframework.ai: DEBUG
+
+# ══════════════════════════════════════════════════════════════════════
+# PROFIL PAR DÉFAUT (tout SAUF "pgvector")
+# Le RAG utilise le SimpleVectorStore en mémoire (RagConfig). Aucune base
+# de données. Or les dépendances pgvector tirent HikariCP sur le
+# classpath, ce qui fait que Spring Boot tente d'auto-configurer une
+# DataSource au démarrage... et échoue, faute d'URL JDBC.
+# On désactive donc cette auto-configuration tant que le profil pgvector
+# n'est pas actif : le projet démarre exactement comme avant.
+# ══════════════════════════════════════════════════════════════════════
+---
+spring:
+  config:
+    activate:
+      on-profile: "!pgvector"
+  autoconfigure:
+    exclude:
+      # Sans URL JDBC, l'auto-config DataSource échoue au démarrage.
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      # Elle déclare aussi un bean nommé "vectorStore" : sans l'exclure,
+      # il entre en collision avec le SimpleVectorStore de RagConfig.
+      - org.springframework.ai.vectorstore.pgvector.autoconfigure.PgVectorStoreAutoConfiguration
+
+# ══════════════════════════════════════════════════════════════════════
+# PROFIL "pgvector" — RAG sur la base PostgreSQL alimentée par ragbatch
+# Activer avec :
+#   mvn spring-boot:run -Dspring-boot.run.profiles=pgvector
+# Prérequis : la base ragbatch tourne (cd ragbatch && docker compose up -d)
+# et a été alimentée (mvn spring-boot:run dans ragbatch).
+#
+# Le profil ne fait que de la CONFIGURATION : aucune classe Java
+# spécifique. Spring AI auto-configure un PgVectorStore à partir des
+# propriétés ci-dessous, et RagController le reçoit via VectorStore.
+# ══════════════════════════════════════════════════════════════════════
+---
+spring:
+  config:
+    activate:
+      on-profile: pgvector
+
+  # Mêmes identifiants que ragbatch/compose.yaml : les deux projets
+  # parlent à la MÊME base. ragbatch écrit, spring-ai-demo lit.
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ragdb
+    username: rag
+    password: ragpwd
+
+  ai:
+    vectorstore:
+      pgvector:
+        # false : c'est ragbatch qui POSSÈDE le schéma (table vector_store,
+        # extension vector, index). L'application se contente de lire une
+        # table déjà créée — elle ne doit pas tenter de la recréer.
+        initialize-schema: false
+        # DOIVENT correspondre à ce qu'a écrit ragbatch, sinon la
+        # recherche est incohérente (768 = nomic-embed-text, cosinus).
+        dimensions: 768
+        distance-type: COSINE_DISTANCE

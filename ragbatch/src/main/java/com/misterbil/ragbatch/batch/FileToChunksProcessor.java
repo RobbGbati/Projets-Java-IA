@@ -41,7 +41,15 @@ public class FileToChunksProcessor implements ItemProcessor<Resource, List<Docum
 
     @Override
     public List<Document> process(Resource file) {
-        List<Document> wholeFile = new TextReader(file).get();   // Extract
+        List<Document> wholeFile;
+        try {
+            wholeFile = new TextReader(file).get();              // Extract
+        } catch (RuntimeException e) {
+            // Traduction en exception typée : c'est elle que le step
+            // déclare skippable (.skip(UnreadableSourceException.class)).
+            // Un fichier corrompu ne doit pas condamner tout le corpus.
+            throw new UnreadableSourceException(file.getFilename(), e);
+        }
         return splitter.apply(wholeFile);                        // Transform
     }
 }

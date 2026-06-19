@@ -1,0 +1,109 @@
+<mxfile host="65bd71144e">
+    <diagram id="archi" name="Architecture">
+        <mxGraphModel dx="906" dy="647" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="t1" value="Les Racines — architecture de l&#39;application" style="text;html=1;fontSize=18;fontStyle=1;align=left;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="20" width="700" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="t2" value="Règle hexagonale : les dépendances pointent vers le domaine ; les adaptateurs implémentent les ports." style="text;html=1;fontSize=11;fontStyle=2;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="54" width="940" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="feC" value="racines-web · React" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#6c8ebf;dashed=1;verticalAlign=top;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="110" width="250" height="330" as="geometry"/>
+                </mxCell>
+                <mxCell id="beC" value="racines-api · Spring Boot (hexagonal)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#82b366;verticalAlign=top;fontStyle=1;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="370" y="90" width="620" height="490" as="geometry"/>
+                </mxCell>
+                <mxCell id="domC" value="domaine (cœur) · sans framework" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;verticalAlign=top;fontStyle=1;fontSize=12;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="210" width="560" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe1" value="Garden — carte de racines" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="160" width="210" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe2" value="Écrans · Déposer / Demander / Fil" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="214" width="210" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe3" value="Animations · Motion / GSAP / d3-force" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="268" width="210" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="fe4" value="api/ — client REST typé" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="322" width="210" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="feN" value="Vercel / Render (statique)" style="text;html=1;fontSize=11;fontStyle=2;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="388" width="210" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="bw" value="adapter in/web · REST controllers" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="140" width="280" height="44" as="geometry"/>
+                </mxCell>
+                <mxCell id="din" value="ports in · use cases" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="275" width="150" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="dsvc" value="services · GraphRagService · Extraction" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" parent="1" vertex="1">
+                    <mxGeometry x="590" y="275" width="200" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="dout" value="ports out · interfaces" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d6b656;" parent="1" vertex="1">
+                    <mxGeometry x="810" y="275" width="130" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="bp" value="adapter out/persistence" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="420" width="240" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="bai" value="adapter out/ai · Spring AI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="420" width="240" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="beN" value="Docker · docker-compose" style="text;html=1;fontSize=11;fontStyle=2;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="430" y="500" width="300" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="neo" value="Neo4j · graphe + index vectoriel" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="430" y="620" width="240" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="llm" value="LLM · OpenAI / Anthropic / Ollama" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="620" width="240" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="neoN" value="Docker · ou Neo4j AuraDB (managé)" style="text;html=1;fontSize=11;fontStyle=2;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="430" y="684" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="llmN" value="clé API · ou Ollama local" style="text;html=1;fontSize=11;fontStyle=2;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="684" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" value="HTTP · REST/JSON" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=11;" parent="1" source="fe4" target="bw" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e2" value="appelle" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=11;" parent="1" source="bw" target="din" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=11;" parent="1" source="din" target="dsvc" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=11;" parent="1" source="dsvc" target="dout" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e5" value="réalisé par" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;dashed=1;fontSize=11;" parent="1" source="dout" target="bp" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="875" y="340"/>
+                            <mxPoint x="620" y="340"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e6" value="réalisé par" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;dashed=1;fontSize=11;" parent="1" source="dout" target="bai" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="e7" value="Bolt 7687" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=11;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="585" y="470" as="sourcePoint"/>
+                        <mxPoint x="575" y="620" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="585" y="545"/>
+                            <mxPoint x="575" y="545"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="e8" value="API" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;fontSize=11;" parent="1" source="bai" target="llm" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

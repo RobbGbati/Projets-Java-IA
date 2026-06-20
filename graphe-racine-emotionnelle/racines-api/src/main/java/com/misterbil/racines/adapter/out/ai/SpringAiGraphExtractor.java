@@ -7,6 +7,7 @@ import com.misterbil.racines.domain.model.GraphSchema;
 import com.misterbil.racines.domain.model.Node;
 import com.misterbil.racines.domain.model.NodeId;
 import com.misterbil.racines.domain.model.NodeType;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.misterbil.racines.domain.port.out.GraphExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,9 +42,18 @@ public class SpringAiGraphExtractor implements GraphExtractor {
     }
 
     // DTO de sortie du LLM (séparé du domaine : c'est un détail d'adaptateur).
-    record LlmNode(String tempId, String type, String label) {}
-    record LlmEdge(String type, String sourceTempId, String targetTempId) {}
-    record LlmGraph(List<LlmNode> nodes, List<LlmEdge> edges) {}
+    // @JsonProperty obligatoire : sans noms de paramètres compilés, Jackson ne
+    // reconnaît pas le constructeur canonique du record (« setterless property »).
+    record LlmNode(@JsonProperty("tempId") String tempId,
+                   @JsonProperty("type") String type,
+                   @JsonProperty("label") String label) {}
+
+    record LlmEdge(@JsonProperty("type") String type,
+                   @JsonProperty("sourceTempId") String sourceTempId,
+                   @JsonProperty("targetTempId") String targetTempId) {}
+
+    record LlmGraph(@JsonProperty("nodes") List<LlmNode> nodes,
+                    @JsonProperty("edges") List<LlmEdge> edges) {}
 
     @Override
     public ExtractionProposal extract(String rawText, GraphSchema schema) {

@@ -1,0 +1,42 @@
+# ════════════════════════════════════════════════════════════════════
+#  Les Racines — orchestration locale : Neo4j + backend.
+#  Secrets via .env (jamais en clair ici). Voir .env.example.
+# ════════════════════════════════════════════════════════════════════
+services:
+  neo4j:
+    image: neo4j:5.26-community
+    ports:
+      - "7474:7474"   # console web Neo4j Browser
+      - "7687:7687"   # protocole Bolt
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD}
+    volumes:
+      - neo4j_data:/data          # volume nommé → le graphe survit aux redémarrages
+    healthcheck:
+      test: ["CMD", "cypher-shell", "-u", "neo4j", "-p", "${NEO4J_PASSWORD}", "RETURN 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      # L'appli joint la base par le NOM DE SERVICE, jamais localhost.
+      SPRING_NEO4J_URI: bolt://neo4j:7687
+      SPRING_NEO4J_AUTHENTICATION_USERNAME: neo4j
+      SPRING_NEO4J_AUTHENTICATION_PASSWORD: ${NEO4J_PASSWORD}
+      RACINES_STORE: neo4j
+      LLM_PROVIDER: ${LLM_PROVIDER:-openai}
+      LLM_API_KEY: ${LLM_API_KEY}
+      LLM_CHAT_MODEL: ${LLM_CHAT_MODEL:-gpt-4o-mini}
+      LLM_EMBED_MODEL: ${LLM_EMBED_MODEL:-text-embedding-3-small}
+      RACINES_EMBEDDING_DIMENSIONS: ${RACINES_EMBEDDING_DIMENSIONS:-1536}
+      RACINES_CORS_ORIGINS: ${RACINES_CORS_ORIGINS:-http://localhost:5173}
+    depends_on:
+      neo4j:
+        condition: service_healthy
+
+volumes:
+  neo4j_data:

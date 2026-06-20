@@ -1,0 +1,66 @@
+# ════════════════════════════════════════════════════════════════════
+#  Les Racines — configuration backend
+#  Tout est surchargeable par variable d'environnement (12-factor).
+# ════════════════════════════════════════════════════════════════════
+spring:
+  application:
+    name: racines-api
+
+  # --- Neo4j (utilisé seulement quand racines.store=neo4j) ---
+  neo4j:
+    uri: ${SPRING_NEO4J_URI:bolt://localhost:7687}
+    authentication:
+      username: ${SPRING_NEO4J_AUTHENTICATION_USERNAME:neo4j}
+      password: ${SPRING_NEO4J_AUTHENTICATION_PASSWORD:password}
+
+  # --- Spring AI : fournisseur de modèles ---
+  # Par défaut 'none' : AUCUN modèle n'est auto-configuré → l'appli démarre
+  # sans clé ni Ollama (phases 0/1 hors-ligne). Pour activer l'IA (phases 2/3),
+  # mettre LLM_PROVIDER=openai (+ LLM_API_KEY) ou LLM_PROVIDER=ollama.
+  ai:
+    model:
+      chat: ${LLM_PROVIDER:none}        # none | openai | ollama
+      embedding: ${LLM_PROVIDER:none}   # none | openai | ollama
+      # On n'utilise QUE chat + embedding. On désactive explicitement les autres
+      # modèles du starter OpenAI (audio/image/modération), sinon leur
+      # auto-configuration réclame la clé API au démarrage.
+      audio:
+        speech: none
+        transcription: none
+      image: none
+      moderation: none
+    openai:
+      api-key: ${LLM_API_KEY:}
+      chat:
+        options:
+          model: ${LLM_CHAT_MODEL:gpt-4o-mini}
+      embedding:
+        options:
+          model: ${LLM_EMBED_MODEL:text-embedding-3-small}
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      chat:
+        options:
+          model: ${LLM_CHAT_MODEL:llama3}
+      embedding:
+        options:
+          model: ${LLM_EMBED_MODEL:nomic-embed-text}
+
+# ════════════════════════════════════════════════════════════════════
+#  Réglages applicatifs « Racines »
+# ════════════════════════════════════════════════════════════════════
+racines:
+  # Adaptateur GraphStore actif : 'inmemory' (phase 0, par défaut) ou 'neo4j'.
+  store: ${RACINES_STORE:inmemory}
+  rag:
+    top-k: ${RACINES_RAG_TOP_K:6}
+    max-hops: ${RACINES_RAG_MAX_HOPS:3}
+  # Dimension des embeddings = celle du modèle choisi.
+  # text-embedding-3-small = 1536 · nomic-embed-text = 768
+  embedding-dimensions: ${RACINES_EMBEDDING_DIMENSIONS:1536}
+  # Origines autorisées pour le front (CORS), séparées par des virgules.
+  cors-allowed-origins: ${RACINES_CORS_ORIGINS:http://localhost:5173}
+
+logging:
+  level:
+    com.misterbil.racines: INFO

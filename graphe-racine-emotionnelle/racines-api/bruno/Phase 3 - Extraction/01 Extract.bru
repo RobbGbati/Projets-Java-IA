@@ -1,0 +1,24 @@
+meta {
+  name: 01 Extract
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/entries/extract
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "text": "Hier soir au dîner de famille, je me suis senti nul, comme si je dérangeais tout le monde. J'ai eu une boule au ventre. Sortir marcher m'a un peu calmé."
+  }
+}
+
+docs {
+  Phase 3 : le LLM repère des nœuds/relations (schéma contraint) et renvoie une
+  PROPOSITION { nodes, edges } — NON persistée (consentement). Nécessite l'IA.
+  Copie la réponse dans la requête « 02 Confirm » après l'avoir validée/corrigée.
+  La qualité dépend du modèle (un petit modèle local extrait grossièrement).
+}

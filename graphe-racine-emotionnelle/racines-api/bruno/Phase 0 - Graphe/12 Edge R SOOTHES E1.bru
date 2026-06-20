@@ -1,0 +1,19 @@
+meta {
+  name: 12 Edge R SOOTHES E1
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{baseUrl}}/api/edges
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "type": "SOOTHES",
+    "source": "{{resourceId}}",
+    "target": "{{emotion1Id}}"
+  }
+}

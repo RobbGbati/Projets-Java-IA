@@ -1,0 +1,18 @@
+meta {
+  name: 02 Common roots
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/insights/common-roots
+  body: none
+  auth: none
+}
+
+docs {
+  Racines communes (US7) : croyances nourries par ≥2 émotions déclenchées par
+  ≥2 situations distinctes. Requête pure graphe (sans LLM). Après avoir joué le
+  dossier « Phase 0 », renvoie « je ne suis pas à la hauteur » reliant la
+  réunion d'équipe et le dîner en famille.
+}

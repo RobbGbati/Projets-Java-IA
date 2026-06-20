@@ -1,0 +1,16 @@
+meta {
+  name: 13 Export
+  type: http
+  seq: 13
+}
+
+get {
+  url: {{baseUrl}}/api/export
+  body: none
+  auth: none
+}
+
+docs {
+  Export du cheminement (US9). Même contrat que /graph, renvoyé en pièce jointe
+  (Content-Disposition: attachment; filename="racines-export.json").
+}

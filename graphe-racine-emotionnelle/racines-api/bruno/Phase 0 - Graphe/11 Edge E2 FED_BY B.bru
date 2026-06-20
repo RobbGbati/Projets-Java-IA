@@ -1,0 +1,19 @@
+meta {
+  name: 11 Edge E2 FED_BY B
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/api/edges
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "type": "FED_BY",
+    "source": "{{emotion2Id}}",
+    "target": "{{beliefId}}"
+  }
+}

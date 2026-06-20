@@ -29,9 +29,12 @@ services:
       SPRING_NEO4J_AUTHENTICATION_PASSWORD: ${NEO4J_PASSWORD}
       RACINES_STORE: neo4j
       LLM_PROVIDER: ${LLM_PROVIDER:-openai}
-      LLM_API_KEY: ${LLM_API_KEY}
+      LLM_API_KEY: ${LLM_API_KEY:-}
       LLM_CHAT_MODEL: ${LLM_CHAT_MODEL:-gpt-4o-mini}
       LLM_EMBED_MODEL: ${LLM_EMBED_MODEL:-text-embedding-3-small}
+      # Avec LLM_PROVIDER=ollama : Ollama tourne sur l'HÔTE, pas dans le réseau
+      # compose → on le joint via host.docker.internal (et non localhost).
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
       RACINES_EMBEDDING_DIMENSIONS: ${RACINES_EMBEDDING_DIMENSIONS:-1536}
       RACINES_CORS_ORIGINS: ${RACINES_CORS_ORIGINS:-http://localhost:5173}
     depends_on:

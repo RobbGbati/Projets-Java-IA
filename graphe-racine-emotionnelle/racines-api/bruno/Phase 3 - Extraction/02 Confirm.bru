@@ -1,0 +1,36 @@
+meta {
+  name: 02 Confirm
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/entries/confirm
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "nodes": [
+      { "id": "n1", "type": "SITUATION", "label": "un dîner en famille", "extra": {} },
+      { "id": "n2", "type": "EMOTION", "label": "honte", "extra": {} },
+      { "id": "n3", "type": "BELIEF", "label": "je ne suis pas à la hauteur", "extra": {} },
+      { "id": "n4", "type": "SENSATION", "label": "boule au ventre", "extra": {} },
+      { "id": "n5", "type": "RESOURCE", "label": "une marche dehors", "extra": {} }
+    ],
+    "edges": [
+      { "id": "", "type": "TRIGGERS", "source": "n1", "target": "n2" },
+      { "id": "", "type": "FED_BY", "source": "n2", "target": "n3" },
+      { "id": "", "type": "EXPRESSED_AS", "source": "n2", "target": "n4" },
+      { "id": "", "type": "SOOTHES", "source": "n5", "target": "n2" }
+    ]
+  }
+}
+
+docs {
+  Proposition VALIDÉE par l'utilisateur → fusion dans la carte avec
+  dédoublonnage par label (les ids temporaires n1..n5 sont remappés sur les
+  nœuds existants quand le label correspond). Renvoie la carte mise à jour.
+  Exemple ci-dessus prêt à l'emploi ; en pratique, colle la sortie de « 01 Extract ».
+}

@@ -1,0 +1,22 @@
+meta {
+  name: 04 Create node - situation diner
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/nodes
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "type": "situation",
+    "label": "un dîner en famille"
+  }
+}
+
+script:post-response {
+  bru.setVar("situation2Id", res.body.id);
+}

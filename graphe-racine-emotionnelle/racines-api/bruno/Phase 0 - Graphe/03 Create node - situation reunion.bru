@@ -1,0 +1,22 @@
+meta {
+  name: 03 Create node - situation reunion
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/nodes
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "type": "situation",
+    "label": "une réunion d'équipe"
+  }
+}
+
+script:post-response {
+  bru.setVar("situation1Id", res.body.id);
+}

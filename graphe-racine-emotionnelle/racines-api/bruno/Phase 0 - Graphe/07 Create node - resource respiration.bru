@@ -1,0 +1,23 @@
+meta {
+  name: 07 Create node - resource respiration
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/nodes
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "type": "resource",
+    "label": "respiration lente",
+    "extra": { "kind": "corps" }
+  }
+}
+
+script:post-response {
+  bru.setVar("resourceId", res.body.id);
+}

@@ -1,0 +1,26 @@
+meta {
+  name: 14 Create node - invalid type (400)
+  type: http
+  seq: 14
+}
+
+post {
+  url: {{baseUrl}}/api/nodes
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "type": "DRAGON",
+    "label": "x"
+  }
+}
+
+assert {
+  res.status: eq 400
+}
+
+docs {
+  Type inconnu → 400 (ApiExceptionHandler). Vérifie la gestion d'entrée invalide.
+}

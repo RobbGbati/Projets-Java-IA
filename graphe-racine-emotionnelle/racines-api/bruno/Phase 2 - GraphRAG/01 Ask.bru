@@ -1,0 +1,25 @@
+meta {
+  name: 01 Ask
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/ask
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "question": "qu'est-ce qui m'apaise quand la honte monte ?"
+  }
+}
+
+docs {
+  Pipeline GraphRAG : embed(question) → vectorSearch (ancres) → traverse
+  (sous-graphe) → ContextBuilder → LLM. Renvoie { answer, subgraph }.
+  Nécessite l'IA activée (LLM_PROVIDER=openai|ollama) ET des embeddings calculés
+  sur les nœuds (créés après activation de l'IA). Sans IA : réponse de repli +
+  sous-graphe vide.
+}

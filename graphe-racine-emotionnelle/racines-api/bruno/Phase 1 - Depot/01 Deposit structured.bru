@@ -1,0 +1,32 @@
+meta {
+  name: 01 Deposit structured
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/entries
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "rawText": "Encore cette réunion, j'avais la gorge serrée.",
+    "sky": "ciel gris",
+    "emotion": "honte",
+    "situation": "une réunion d'équipe",
+    "belief": "je ne suis pas à la hauteur",
+    "sensation": "gorge serrée",
+    "need": "reconnaissance",
+    "resource": "respiration lente",
+    "person": "P."
+  }
+}
+
+docs {
+  Saisie structurée (phase 1) : crée Entry + les nœuds renseignés + leurs
+  relations (TRIGGERS/FED_BY/EXPRESSED_AS/TOUCHES/SOOTHES + MENTIONS) et
+  renvoie la carte mise à jour. NB : chaque dépôt crée de NOUVEAUX nœuds (pas
+  de dédoublonnage ici — c'est le rôle de /entries/confirm en phase 3).
+}

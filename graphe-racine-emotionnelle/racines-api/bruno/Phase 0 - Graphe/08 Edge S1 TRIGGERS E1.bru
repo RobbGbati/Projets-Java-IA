@@ -1,0 +1,19 @@
+meta {
+  name: 08 Edge S1 TRIGGERS E1
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/api/edges
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "type": "TRIGGERS",
+    "source": "{{situation1Id}}",
+    "target": "{{emotion1Id}}"
+  }
+}

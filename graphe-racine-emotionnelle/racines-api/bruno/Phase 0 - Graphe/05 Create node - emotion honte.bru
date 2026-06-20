@@ -1,0 +1,23 @@
+meta {
+  name: 05 Create node - emotion honte
+  type: http
+  seq: 5
+}
+
+post {
+  url: {{baseUrl}}/api/nodes
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "type": "emotion",
+    "label": "honte",
+    "extra": { "valence": "négative" }
+  }
+}
+
+script:post-response {
+  bru.setVar("emotion1Id", res.body.id);
+}

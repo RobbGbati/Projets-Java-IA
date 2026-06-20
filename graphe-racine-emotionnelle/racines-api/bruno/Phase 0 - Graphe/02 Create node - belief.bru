@@ -1,0 +1,26 @@
+meta {
+  name: 02 Create node - belief
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/nodes
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "type": "belief",
+    "label": "je ne suis pas à la hauteur"
+  }
+}
+
+script:post-response {
+  bru.setVar("beliefId", res.body.id);
+}
+
+docs {
+  Crée la croyance partagée et stocke son id dans la variable beliefId.
+}

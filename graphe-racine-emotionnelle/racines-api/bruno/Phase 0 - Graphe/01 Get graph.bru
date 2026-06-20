@@ -1,0 +1,15 @@
+meta {
+  name: 01 Get graph
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/graph
+  body: none
+  auth: none
+}
+
+docs {
+  Carte complète { nodes, edges }. Vide au premier lancement sur une base Neo4j neuve.
+}

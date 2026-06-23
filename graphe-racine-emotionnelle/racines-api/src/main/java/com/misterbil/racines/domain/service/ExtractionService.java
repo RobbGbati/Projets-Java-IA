@@ -10,8 +10,8 @@ import com.misterbil.racines.domain.model.NodeId;
 import com.misterbil.racines.domain.port.in.ConfirmProposal;
 import com.misterbil.racines.domain.port.in.ProposeFromText;
 import com.misterbil.racines.domain.port.out.EmbeddingPort;
-import com.misterbil.racines.domain.port.out.GraphExtractor;
-import com.misterbil.racines.domain.port.out.GraphStore;
+import com.misterbil.racines.domain.port.out.GraphExtractorPort;
+import com.misterbil.racines.domain.port.out.GraphStorePort;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,11 +30,11 @@ import java.util.Map;
  */
 public class ExtractionService implements ProposeFromText, ConfirmProposal {
 
-    private final GraphExtractor extractor;
-    private final GraphStore store;
+    private final GraphExtractorPort extractor;
+    private final GraphStorePort store;
     private final EmbeddingPort embeddings;
 
-    public ExtractionService(GraphExtractor extractor, GraphStore store, EmbeddingPort embeddings) {
+    public ExtractionService(GraphExtractorPort extractor, GraphStorePort store, EmbeddingPort embeddings) {
         this.extractor = extractor;
         this.store = store;
         this.embeddings = embeddings;

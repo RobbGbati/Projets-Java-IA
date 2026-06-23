@@ -8,6 +8,6 @@ import com.misterbil.racines.domain.model.GraphSchema;
  * (phase 3). Impl : Spring AI (sortie structurée) ou LangChain4j LLMGraphTransformer.
  * Ne persiste rien : renvoie une proposition à valider.
  */
-public interface GraphExtractor {
+public interface GraphExtractorPort {
     ExtractionProposal extract(String rawText, GraphSchema schema);
 }

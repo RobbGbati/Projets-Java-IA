@@ -1,5 +1,6 @@
 package com.misterbil.racines.adapter.out.ai;
 
+import lombok.RequiredArgsConstructor;
 import com.misterbil.racines.domain.port.out.ChatPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
  * doux au lieu de planter.</p>
  */
 @Component
+@RequiredArgsConstructor
 public class SpringAiChat implements ChatPort {
 
     private static final Logger log = LoggerFactory.getLogger(SpringAiChat.class);
@@ -26,11 +28,6 @@ public class SpringAiChat implements ChatPort {
             + "Reviens dans un moment — tes racines, elles, restent là.";
 
     private final ObjectProvider<ChatModel> models;
-
-    public SpringAiChat(ObjectProvider<ChatModel> models) {
-        this.models = models;
-    }
-
     @Override
     public String generate(String system, String context, String question) {
         ChatModel model = models.getIfAvailable();

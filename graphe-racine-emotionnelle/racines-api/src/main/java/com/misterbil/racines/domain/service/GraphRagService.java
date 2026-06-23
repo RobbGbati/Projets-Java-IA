@@ -8,23 +8,23 @@ import com.misterbil.racines.domain.model.SubGraph;
 import com.misterbil.racines.domain.port.in.AskQuestion;
 import com.misterbil.racines.domain.port.out.ChatPort;
 import com.misterbil.racines.domain.port.out.EmbeddingPort;
-import com.misterbil.racines.domain.port.out.GraphStore;
+import com.misterbil.racines.domain.port.out.GraphStorePort;
 
 import java.util.List;
 
 /**
  * Le pipeline GraphRAG (phase 2, SPEC §5.1). Ne dépend que d'interfaces →
- * testable avec un GraphStore/EmbeddingPort/ChatPort bouchonnés, sans vraie
+ * testable avec un GraphStorePort/EmbeddingPort/ChatPort bouchonnés, sans vraie
  * base ni vrai LLM. C'est tout l'intérêt de l'hexagonale.
  */
 public class GraphRagService implements AskQuestion {
 
-    private final GraphStore graph;
+    private final GraphStorePort graph;
     private final EmbeddingPort embeddings;
     private final ChatPort chat;
     private final RagSettings cfg;
 
-    public GraphRagService(GraphStore graph, EmbeddingPort embeddings, ChatPort chat, RagSettings cfg) {
+    public GraphRagService(GraphStorePort graph, EmbeddingPort embeddings, ChatPort chat, RagSettings cfg) {
         this.graph = graph;
         this.embeddings = embeddings;
         this.chat = chat;

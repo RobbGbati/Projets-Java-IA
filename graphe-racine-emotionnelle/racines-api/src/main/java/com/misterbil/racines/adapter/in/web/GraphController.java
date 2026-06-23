@@ -1,5 +1,6 @@
 package com.misterbil.racines.adapter.in.web;
 
+import lombok.RequiredArgsConstructor;
 import com.misterbil.racines.adapter.in.web.dto.Dtos.CreateEdgeRequest;
 import com.misterbil.racines.adapter.in.web.dto.Dtos.CreateNodeRequest;
 import com.misterbil.racines.adapter.in.web.dto.Dtos.EdgeDto;
@@ -23,16 +24,11 @@ import java.util.Map;
 /** Lecture/écriture de la carte (phase 0) + export JSON (phase 1). */
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class GraphController {
 
     private final GetGraph getGraph;
     private final WriteGraph writeGraph;
-
-    public GraphController(GetGraph getGraph, WriteGraph writeGraph) {
-        this.getGraph = getGraph;
-        this.writeGraph = writeGraph;
-    }
-
     @GetMapping("/graph")
     public GraphDto graph() {
         return WebMapper.toGraph(getGraph.full());

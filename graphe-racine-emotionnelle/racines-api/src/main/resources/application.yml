@@ -50,7 +50,7 @@ spring:
 #  Réglages applicatifs « Racines »
 # ════════════════════════════════════════════════════════════════════
 racines:
-  # Adaptateur GraphStore actif : 'inmemory' (phase 0, par défaut) ou 'neo4j'.
+  # Adaptateur GraphStorePort actif : 'inmemory' (phase 0, par défaut) ou 'neo4j'.
   store: ${RACINES_STORE:inmemory}
   rag:
     top-k: ${RACINES_RAG_TOP_K:6}

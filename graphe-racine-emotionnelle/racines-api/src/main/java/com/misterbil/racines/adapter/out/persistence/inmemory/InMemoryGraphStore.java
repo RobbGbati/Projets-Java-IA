@@ -10,7 +10,7 @@ import com.misterbil.racines.domain.model.NodeId;
 import com.misterbil.racines.domain.model.NodeRef;
 import com.misterbil.racines.domain.model.NodeType;
 import com.misterbil.racines.domain.model.SubGraph;
-import com.misterbil.racines.domain.port.out.GraphStore;
+import com.misterbil.racines.domain.port.out.GraphStorePort;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Adaptateur GraphStore EN MÉMOIRE (phase 0). Aucune base, aucune annotation de
+ * Adaptateur GraphStorePort EN MÉMOIRE (phase 0). Aucune base, aucune annotation de
  * persistance : il manipule directement le modèle de domaine — le meilleur
  * garde-fou contre le couplage prématuré (SPEC §4). Données semées au démarrage.
  *
@@ -34,7 +34,7 @@ import java.util.Set;
  */
 @Component
 @ConditionalOnProperty(name = "racines.store", havingValue = "inmemory", matchIfMissing = true)
-public class InMemoryGraphStore implements GraphStore {
+public class InMemoryGraphStore implements GraphStorePort {
 
     private final Map<NodeId, Node> nodes = new LinkedHashMap<>();
     private final Set<Edge> edges = new LinkedHashSet<>();

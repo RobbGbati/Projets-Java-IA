@@ -1,5 +1,6 @@
 package com.misterbil.racines.adapter.out.persistence.neo4j;
 
+import lombok.RequiredArgsConstructor;
 import com.misterbil.racines.domain.model.CommonRoot;
 import com.misterbil.racines.domain.model.Edge;
 import com.misterbil.racines.domain.model.EdgeType;
@@ -10,7 +11,7 @@ import com.misterbil.racines.domain.model.NodeId;
 import com.misterbil.racines.domain.model.NodeRef;
 import com.misterbil.racines.domain.model.NodeType;
 import com.misterbil.racines.domain.model.SubGraph;
-import com.misterbil.racines.domain.port.out.GraphStore;
+import com.misterbil.racines.domain.port.out.GraphStorePort;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Repository;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * Adaptateur GraphStore sur Neo4j via {@link Neo4jClient} (Cypher bas niveau).
+ * Adaptateur GraphStorePort sur Neo4j via {@link Neo4jClient} (Cypher bas niveau).
  *
  * <p>Choix d'implémentation : un seul label {@code :RacineNode} + une propriété
  * {@code type} (au lieu d'un label Neo4j par type). Cela évite APOC pour poser
@@ -40,17 +41,13 @@ import java.util.stream.StreamSupport;
  */
 @Repository
 @ConditionalOnProperty(name = "racines.store", havingValue = "neo4j")
-public class Neo4jGraphStore implements GraphStore {
+@RequiredArgsConstructor
+public class Neo4jGraphStore implements GraphStorePort {
 
     static final String LABEL = "RacineNode";
     private static final List<String> RESERVED = List.of("id", "type", "label", "embedding", "createdAt");
 
     private final Neo4jClient client;
-
-    public Neo4jGraphStore(Neo4jClient client) {
-        this.client = client;
-    }
-
     // ---- lecture --------------------------------------------------------
     @Override
     public InnerGraph load() {

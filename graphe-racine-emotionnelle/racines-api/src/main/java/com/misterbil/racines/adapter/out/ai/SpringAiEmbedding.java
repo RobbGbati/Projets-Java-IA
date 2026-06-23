@@ -1,5 +1,6 @@
 package com.misterbil.racines.adapter.out.ai;
 
+import lombok.RequiredArgsConstructor;
 import com.misterbil.racines.domain.port.out.EmbeddingPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,17 +17,13 @@ import org.springframework.stereotype.Component;
  * 0/1 démarrent hors-ligne ; seule la recherche d'ancres (phase 2) reste muette.</p>
  */
 @Component
+@RequiredArgsConstructor
 public class SpringAiEmbedding implements EmbeddingPort {
 
     private static final Logger log = LoggerFactory.getLogger(SpringAiEmbedding.class);
     private static final float[] EMPTY = new float[0];
 
     private final ObjectProvider<EmbeddingModel> models;
-
-    public SpringAiEmbedding(ObjectProvider<EmbeddingModel> models) {
-        this.models = models;
-    }
-
     @Override
     public float[] embed(String text) {
         if (text == null || text.isBlank()) return EMPTY;

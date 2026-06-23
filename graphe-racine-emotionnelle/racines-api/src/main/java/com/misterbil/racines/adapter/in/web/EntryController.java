@@ -1,5 +1,6 @@
 package com.misterbil.racines.adapter.in.web;
 
+import lombok.RequiredArgsConstructor;
 import com.misterbil.racines.adapter.in.web.dto.Dtos.DepositRequest;
 import com.misterbil.racines.adapter.in.web.dto.Dtos.ExtractRequest;
 import com.misterbil.racines.adapter.in.web.dto.Dtos.GraphDto;
@@ -16,19 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 /** Dépôt d'entrées : structuré (phase 1) puis extraction libre + validation (phase 3). */
 @RestController
 @RequestMapping("/api/entries")
+@RequiredArgsConstructor
 public class EntryController {
 
     private final DepositEntry depositEntry;
     private final ProposeFromText proposeFromText;
     private final ConfirmProposal confirmProposal;
-
-    public EntryController(DepositEntry depositEntry, ProposeFromText proposeFromText,
-                           ConfirmProposal confirmProposal) {
-        this.depositEntry = depositEntry;
-        this.proposeFromText = proposeFromText;
-        this.confirmProposal = confirmProposal;
-    }
-
     /** Phase 1 : saisie structurée → la carte grandit. */
     @PostMapping
     public GraphDto deposit(@RequestBody DepositRequest req) {

@@ -14,7 +14,7 @@ import com.misterbil.racines.domain.port.in.FindCommonRoots;
 import com.misterbil.racines.domain.port.in.GetGraph;
 import com.misterbil.racines.domain.port.in.WriteGraph;
 import com.misterbil.racines.domain.port.out.EmbeddingPort;
-import com.misterbil.racines.domain.port.out.GraphStore;
+import com.misterbil.racines.domain.port.out.GraphStorePort;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,14 +23,14 @@ import java.util.Map;
 /**
  * Cœur des cas d'usage « carte » : lecture, écriture directe, dépôt structuré,
  * racines communes (phases 0, 1 ; US7). Ne connaît QUE des ports (interfaces)
- * → testable avec un GraphStore et un EmbeddingPort bouchonnés.
+ * → testable avec un GraphStorePort et un EmbeddingPort bouchonnés.
  */
 public class GraphService implements GetGraph, WriteGraph, DepositEntry, FindCommonRoots {
 
-    private final GraphStore store;
+    private final GraphStorePort store;
     private final EmbeddingPort embeddings;
 
-    public GraphService(GraphStore store, EmbeddingPort embeddings) {
+    public GraphService(GraphStorePort store, EmbeddingPort embeddings) {
         this.store = store;
         this.embeddings = embeddings;
     }

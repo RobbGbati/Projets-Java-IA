@@ -1,5 +1,6 @@
 package com.misterbil.racines.adapter.out.ai;
 
+import lombok.RequiredArgsConstructor;
 import com.misterbil.racines.domain.model.Edge;
 import com.misterbil.racines.domain.model.EdgeType;
 import com.misterbil.racines.domain.model.ExtractionProposal;
@@ -8,7 +9,7 @@ import com.misterbil.racines.domain.model.Node;
 import com.misterbil.racines.domain.model.NodeId;
 import com.misterbil.racines.domain.model.NodeType;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.misterbil.racines.domain.port.out.GraphExtractor;
+import com.misterbil.racines.domain.port.out.GraphExtractorPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.client.ChatClient;
@@ -23,7 +24,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Adaptateur GraphExtractor via Spring AI — sortie STRUCTURÉE (phase 3, SPEC §5.2).
+ * Adaptateur GraphExtractorPort via Spring AI — sortie STRUCTURÉE (phase 3, SPEC §5.2).
  *
  * <p>Le LLM ne reçoit qu'un schéma contraint et renvoie un JSON typé (via
  * {@code .entity(...)}). On mappe ensuite vers le modèle de domaine. Les ids
@@ -31,16 +32,12 @@ import java.util.Map;
  * validation (dédoublonnage). Best-effort : sur erreur → proposition vide.</p>
  */
 @Component
-public class SpringAiGraphExtractor implements GraphExtractor {
+@RequiredArgsConstructor
+public class SpringAiGraphExtractor implements GraphExtractorPort {
 
     private static final Logger log = LoggerFactory.getLogger(SpringAiGraphExtractor.class);
 
     private final ObjectProvider<ChatModel> models;
-
-    public SpringAiGraphExtractor(ObjectProvider<ChatModel> models) {
-        this.models = models;
-    }
-
     // DTO de sortie du LLM (séparé du domaine : c'est un détail d'adaptateur).
     // @JsonProperty obligatoire : sans noms de paramètres compilés, Jackson ne
     // reconnaît pas le constructeur canonique du record (« setterless property »).

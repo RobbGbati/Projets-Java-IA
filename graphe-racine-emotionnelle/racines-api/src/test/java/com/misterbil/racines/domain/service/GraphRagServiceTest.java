@@ -9,7 +9,7 @@ import com.misterbil.racines.domain.model.RagSettings;
 import com.misterbil.racines.domain.model.SubGraph;
 import com.misterbil.racines.domain.port.out.ChatPort;
 import com.misterbil.racines.domain.port.out.EmbeddingPort;
-import com.misterbil.racines.domain.port.out.GraphStore;
+import com.misterbil.racines.domain.port.out.GraphStorePort;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -30,7 +30,7 @@ class GraphRagServiceTest {
 
     @Test
     void ask_enchaine_embed_search_traverse_generate_et_renvoie_le_sous_graphe() {
-        GraphStore store = mock(GraphStore.class);
+        GraphStorePort store = mock(GraphStorePort.class);
         EmbeddingPort embeddings = mock(EmbeddingPort.class);
         ChatPort chat = mock(ChatPort.class);
 

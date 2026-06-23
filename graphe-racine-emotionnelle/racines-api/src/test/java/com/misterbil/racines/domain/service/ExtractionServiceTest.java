@@ -9,8 +9,8 @@ import com.misterbil.racines.domain.model.Node;
 import com.misterbil.racines.domain.model.NodeId;
 import com.misterbil.racines.domain.model.NodeType;
 import com.misterbil.racines.domain.port.out.EmbeddingPort;
-import com.misterbil.racines.domain.port.out.GraphExtractor;
-import com.misterbil.racines.domain.port.out.GraphStore;
+import com.misterbil.racines.domain.port.out.GraphExtractorPort;
+import com.misterbil.racines.domain.port.out.GraphStorePort;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -30,8 +30,8 @@ class ExtractionServiceTest {
 
     @Test
     void confirm_dedoublonne_par_label_et_remappe_les_aretes() {
-        GraphExtractor extractor = mock(GraphExtractor.class);
-        GraphStore store = mock(GraphStore.class);
+        GraphExtractorPort extractor = mock(GraphExtractorPort.class);
+        GraphStorePort store = mock(GraphStorePort.class);
         EmbeddingPort embeddings = mock(EmbeddingPort.class);
         when(embeddings.embed(any())).thenReturn(new float[0]);
 

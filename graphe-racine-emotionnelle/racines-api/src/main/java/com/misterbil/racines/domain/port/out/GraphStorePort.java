@@ -17,7 +17,7 @@ import java.util.List;
  * <p>Regroupe graphe et recherche vectorielle parce que Neo4j fait les deux
  * (SPEC §3). On scindera si ça grossit — pas avant.</p>
  */
-public interface GraphStore {
+public interface GraphStorePort {
 
     /** Charge la carte complète. */
     InnerGraph load();

@@ -4,8 +4,8 @@ import com.misterbil.racines.domain.model.RagSettings;
 import com.misterbil.racines.domain.port.in.AskQuestion;
 import com.misterbil.racines.domain.port.out.ChatPort;
 import com.misterbil.racines.domain.port.out.EmbeddingPort;
-import com.misterbil.racines.domain.port.out.GraphExtractor;
-import com.misterbil.racines.domain.port.out.GraphStore;
+import com.misterbil.racines.domain.port.out.GraphExtractorPort;
+import com.misterbil.racines.domain.port.out.GraphStorePort;
 import com.misterbil.racines.domain.service.ExtractionService;
 import com.misterbil.racines.domain.service.GraphRagService;
 import com.misterbil.racines.domain.service.GraphService;
@@ -30,20 +30,20 @@ public class DomainWiring {
 
     /** Implémente GetGraph + WriteGraph + DepositEntry + FindCommonRoots. */
     @Bean
-    public GraphService graphService(GraphStore store, EmbeddingPort embeddings) {
+    public GraphService graphService(GraphStorePort store, EmbeddingPort embeddings) {
         return new GraphService(store, embeddings);
     }
 
     /** Implémente AskQuestion (pipeline GraphRAG). */
     @Bean
-    public AskQuestion askQuestion(GraphStore store, EmbeddingPort embeddings,
+    public AskQuestion askQuestion(GraphStorePort store, EmbeddingPort embeddings,
                                    ChatPort chat, RagSettings settings) {
         return new GraphRagService(store, embeddings, chat, settings);
     }
 
     /** Implémente ProposeFromText + ConfirmProposal (extraction phase 3). */
     @Bean
-    public ExtractionService extractionService(GraphExtractor extractor, GraphStore store,
+    public ExtractionService extractionService(GraphExtractorPort extractor, GraphStorePort store,
                                                EmbeddingPort embeddings) {
         return new ExtractionService(extractor, store, embeddings);
     }

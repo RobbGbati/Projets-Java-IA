@@ -82,6 +82,18 @@
       <groupId>org.springframework.ai</groupId>
       <artifactId>spring-ai-starter-model-ollama</artifactId>
     </dependency>
+    <!-- ══════════════════════════════════════════════════════════════
+         Anthropic (Claude) — fournisseur de CHAT uniquement (ce starter
+         n'expose pas d'embedding). Activé par spring.ai.model.chat=anthropic
+         (branché sur LLM_PROVIDER). Comme pour OpenAI/Ollama, le fournisseur
+         reste un détail de config : ChatPort abstrait le reste du code.
+         Anthropic ne fournit pas d'embeddings → on règle EMBEDDING_PROVIDER
+         séparément (ex. ollama, local et gratuit).
+         ══════════════════════════════════════════════════════════════ -->
+    <dependency>
+      <groupId>org.springframework.ai</groupId>
+      <artifactId>spring-ai-starter-model-anthropic</artifactId>
+    </dependency>
 
     <!-- ══════════════════════════════════════════════════════════════
          Lombok — supprime le boilerplate (constructeurs d'injection des

@@ -11,16 +11,23 @@ spring:
     uri: ${SPRING_NEO4J_URI:bolt://localhost:7687}
     authentication:
       username: ${SPRING_NEO4J_AUTHENTICATION_USERNAME:neo4j}
-      password: ${SPRING_NEO4J_AUTHENTICATION_PASSWORD:password}
+      # Retombe sur NEO4J_PASSWORD (la même variable que le conteneur Neo4j) si
+      # SPRING_NEO4J_AUTHENTICATION_PASSWORD n'est pas défini → un seul mot de passe.
+      password: ${SPRING_NEO4J_AUTHENTICATION_PASSWORD:${NEO4J_PASSWORD:password}}
 
   # --- Spring AI : fournisseur de modèles ---
   # Par défaut 'none' : AUCUN modèle n'est auto-configuré → l'appli démarre
   # sans clé ni Ollama (phases 0/1 hors-ligne). Pour activer l'IA (phases 2/3),
-  # mettre LLM_PROVIDER=openai (+ LLM_API_KEY) ou LLM_PROVIDER=ollama.
+  # mettre LLM_PROVIDER=openai (+ LLM_API_KEY), LLM_PROVIDER=ollama, ou
+  # LLM_PROVIDER=anthropic (+ ANTHROPIC_API_KEY).
   ai:
     model:
-      chat: ${LLM_PROVIDER:none}        # none | openai | ollama
-      embedding: ${LLM_PROVIDER:none}   # none | openai | ollama
+      # Chat et embedding sont DÉCOUPLÉS : Anthropic ne fournit pas d'embedding,
+      # donc le fournisseur d'embedding se règle à part via EMBEDDING_PROVIDER
+      # (par défaut = LLM_PROVIDER → comportement rétro-compatible openai/ollama).
+      # Combo recommandé : chat=anthropic (Claude) + embedding=ollama (local, gratuit).
+      chat: ${LLM_PROVIDER:none}                              # none | openai | ollama | anthropic
+      embedding: ${EMBEDDING_PROVIDER:${LLM_PROVIDER:none}}   # none | openai | ollama (PAS anthropic)
       # On n'utilise QUE chat + embedding. On désactive explicitement les autres
       # modèles du starter OpenAI (audio/image/modération), sinon leur
       # auto-configuration réclame la clé API au démarrage.
@@ -45,6 +52,15 @@ spring:
       embedding:
         options:
           model: ${LLM_EMBED_MODEL:nomic-embed-text}
+    # Anthropic (Claude) : chat seul. Clé DÉDIÉE (ANTHROPIC_API_KEY) pour cohabiter
+    # avec une éventuelle clé d'embedding d'un autre fournisseur. LLM_CHAT_MODEL est
+    # partagé : ne le fixer que pour le fournisseur de chat actif.
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY:}
+      chat:
+        options:
+          model: ${LLM_CHAT_MODEL:claude-haiku-4-5}   # ex. claude-sonnet-4-5, claude-opus-4-8
+          max-tokens: ${LLM_MAX_TOKENS:1024}
 
 # ════════════════════════════════════════════════════════════════════
 #  Réglages applicatifs « Racines »

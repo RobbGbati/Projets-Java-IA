@@ -28,6 +28,7 @@ config            DomainWiring (@Bean du domaine), WebCorsConfig
 - **Modèle générique** : un seul `Node` typé par enum `NodeType` (pas une classe par label). Un seul mapping, logique simple.
 - **Neo4j via `Neo4jClient`** (Cypher), pas l'OGM `@Node` : le domaine reste sans annotation. Un label `:RacineNode` + propriété `type` (évite APOC pour les labels dynamiques).
 - **Adaptateurs IA résilients** : sans clé/Ollama, `embed` renvoie `[]` et `chat` un message de repli → les phases 0/1 tournent **hors-ligne**.
+- **Fournisseurs Spring AI découplés** : chat = `LLM_PROVIDER` (`openai` | `ollama` | `anthropic`), embedding = `EMBEDDING_PROVIDER` (défaut = `LLM_PROVIDER`). Anthropic = chat seul (pas d'embedding) → combo conseillé `chat=anthropic` + `embedding=ollama` (local, gratuit). Changer de fournisseur = config, pas de code (l'adaptateur `SpringAiChat`/`ChatPort` est inchangé).
 - **Bascule de store** via `racines.store` (`inmemory` par défaut | `neo4j`) et `@ConditionalOnProperty`.
 
 ## Lancer

@@ -29,6 +29,8 @@ public class SpringAiEmbedding implements EmbeddingPort {
         if (text == null || text.isBlank()) return EMPTY;
         EmbeddingModel model = models.getIfAvailable();
         if (model == null) return EMPTY;   // IA désactivée → pas de vecteur
+        // DEBUG : embed est appelé par nœud au dépôt (volumineux) → on évite INFO.
+        log.debug("Embedding : {}", model.getClass().getSimpleName());
         try {
             return model.embed(text);
         } catch (Exception e) {

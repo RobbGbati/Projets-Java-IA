@@ -1,16 +1,23 @@
 /**
- * Demander (SPEC §3, écran 4 · PRD US6/US7). Un champ unique. La réponse arrive
- * douce. Le sous-graphe pertinent est mémorisé et s'illumine quand on revient au
- * Jardin. Bouton « racine commune » → la séquence signature (Revelation), jouée
- * sur la carte.
+ * Demander (SPEC §3, écran 4 · PRD US6/US7). Hero centré + champ unique + cartes
+ * de questions inspirantes (cf. maquette). La réponse arrive douce ; le
+ * sous-graphe est mémorisé et s'illumine au retour sur le Jardin. « Racine
+ * commune » → la séquence signature (Revelation), jouée sur la carte.
  */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import s from './screens.module.css';
-import { Field, Invitation, SoftButton } from '../ui/primitives';
+import { SoftButton } from '../ui/primitives';
 import { useGraphStore } from '../store/useGraphStore';
 import { api, ApiError } from '../api/client';
 import { revelationPhrase } from '../api/types';
+
+const EXEMPLES = [
+  "qu'est-ce qui m'a déjà apaisé quand la tristesse est montée ?",
+  'quelle croyance limitante revient le plus souvent sous mes tensions ?',
+  'mes tensions au bureau ont-elles un lien avec ma famille ?',
+  'quels sont mes besoins insatisfaits les plus fréquents ?',
+];
 
 export function Demander() {
   const highlightSubgraph = useGraphStore((st) => st.highlightSubgraph);
@@ -24,16 +31,18 @@ export function Demander() {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  const ask = async () => {
-    if (!question.trim()) return;
+  const ask = async (q: string) => {
+    const text = q.trim();
+    if (!text || busy) return;
+    setQuestion(text);
     setBusy(true);
     setErr(null);
     try {
-      const res = await api.ask(question.trim());
+      const res = await api.ask(text);
       setAnswer(res.answer);
       highlightSubgraph(res.subgraph);
       setHasSubgraph(res.subgraph.nodes.length > 0);
-      addFil({ kind: 'question', text: question.trim() });
+      addFil({ kind: 'question', text });
     } catch (e) {
       setErr(e instanceof ApiError ? e.message : 'la réponse n’a pas pu venir');
     } finally {
@@ -62,40 +71,73 @@ export function Demander() {
   };
 
   return (
-    <div>
-      <h2 className={s.title}>demander</h2>
-      <Invitation>pose ta question à tes racines — tu recevras une lumière, pas un verdict.</Invitation>
+    <div className={s.ask}>
+      <h2 className={s.askTitle}>Interroger ses Racines</h2>
+      <p className={s.askLede}>
+        pose une question en langage naturel. le GraphRAG traversera tes écrits passés
+        pour révéler les fils invisibles et ce qui t'apaise.
+      </p>
 
-      <div style={{ marginTop: '1.2rem' }}>
-        <Field
-          label="ta question"
-          textarea
+      <div className={s.search}>
+        <input
+          className={s.searchInput}
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
-          placeholder="qu'est-ce qui m'a apaisé quand j'étais en colère ?"
+          onKeyDown={(e) => e.key === 'Enter' && ask(question)}
+          placeholder="ex : qu'est-ce qui nourrit ma colère en ce moment ?"
+          aria-label="ta question"
+          disabled={busy}
         />
-        <div className={s.row}>
-          <SoftButton variant="accent" onClick={ask} disabled={busy}>
-            {busy ? 'la carte écoute…' : 'demander'}
-          </SoftButton>
-          <SoftButton variant="ghost" onClick={reveal} disabled={busy}>
-            une racine commune ?
-          </SoftButton>
-        </div>
+        <button
+          className={s.sendBtn}
+          onClick={() => ask(question)}
+          disabled={busy || !question.trim()}
+          aria-label="demander"
+          title="demander"
+        >
+          ➤
+        </button>
       </div>
 
-      {err && <p style={{ color: 'var(--corail)' }}>{err}</p>}
+      {err && <p style={{ color: 'var(--corail)', textAlign: 'center' }}>{err}</p>}
 
-      {answer && (
+      {answer ? (
         <>
           <div className={s.answer}>{answer}</div>
-          {hasSubgraph && (
-            <div className={s.row}>
+          <div className={s.row} style={{ justifyContent: 'center' }}>
+            {hasSubgraph && (
               <SoftButton variant="ghost" onClick={() => navigate('/jardin')}>
                 voir le sous-graphe dans le jardin
               </SoftButton>
-            </div>
-          )}
+            )}
+            <SoftButton
+              variant="ghost"
+              onClick={() => {
+                setAnswer(null);
+                setQuestion('');
+              }}
+            >
+              poser une autre question
+            </SoftButton>
+          </div>
+        </>
+      ) : (
+        <>
+          <p className="eyebrow" style={{ textAlign: 'center', marginTop: '2rem' }}>
+            ✧ exemples de questions inspirantes
+          </p>
+          <div className={s.examples}>
+            {EXEMPLES.map((q) => (
+              <button key={q} className={s.exampleCard} onClick={() => ask(q)} disabled={busy}>
+                {q}
+              </button>
+            ))}
+          </div>
+          <div className={s.row} style={{ justifyContent: 'center', marginTop: '1.4rem' }}>
+            <SoftButton variant="ghost" onClick={reveal} disabled={busy}>
+              ou révèle une racine commune
+            </SoftButton>
+          </div>
         </>
       )}
     </div>

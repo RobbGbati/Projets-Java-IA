@@ -18,30 +18,88 @@
   margin-top: 0.6rem;
 }
 
-/* sélecteur de ciel */
-.skies {
+/* cartes de ciel */
+.skyCards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.6rem;
+  margin: 0.5rem 0 0;
+}
+
+.skyCard {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 0.45rem;
-  flex-wrap: wrap;
-  margin: 0.2rem 0 1.4rem;
-}
-
-.skyChip {
-  font-family: var(--corps);
-  font-size: 0.88rem;
-  color: var(--encre);
+  padding: 1rem 0.5rem;
+  text-align: center;
   background: var(--creme);
-  border: 1px solid rgba(92, 70, 48, 0.25);
-  border-radius: 999px;
-  padding: 0.4rem 0.9rem;
+  border: 1px solid rgba(92, 70, 48, 0.18);
+  border-radius: 16px;
   cursor: pointer;
-  transition: all var(--duree-courte) var(--ease-organique);
+  transition: border-color var(--duree-courte) var(--ease-organique),
+    transform var(--duree-courte) var(--ease-organique);
 }
 
-.skyChip.on {
-  background: var(--terre-douce);
-  color: var(--creme);
-  border-color: var(--terre-douce);
+.skyCard:hover {
+  transform: translateY(-1px);
+  border-color: var(--racine-claire);
+}
+
+.skyCardOn {
+  border-color: var(--encre);
+  box-shadow: 0 0 0 1px var(--encre) inset;
+}
+
+.skySwatch {
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(43, 51, 38, 0.1) inset;
+}
+
+.skyName {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 0.98rem;
+  color: var(--encre);
+}
+
+.skyDesc {
+  font-size: 0.74rem;
+  color: var(--encre-doux);
+  line-height: 1.25;
+}
+
+@media (max-width: 560px) {
+  .skyCards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* carte d'écriture */
+.writeCard {
+  margin-top: 1.4rem;
+  padding: 1.4rem;
+  background: var(--creme);
+  border: 1px solid rgba(92, 70, 48, 0.16);
+  border-radius: 18px;
+}
+
+.writeHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.writeTitle {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 1.3rem;
+  margin: 0 0 0.2rem;
+  color: var(--encre);
 }
 
 /* grille des champs structurés */

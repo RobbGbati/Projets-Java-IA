@@ -6,6 +6,7 @@
  */
 import { useState } from 'react';
 import s from './screens.module.css';
+import { useNavigate } from 'react-router-dom';
 import { Field, Invitation, SoftButton } from '../ui/primitives';
 import { useGraphStore } from '../store/useGraphStore';
 import { api, ApiError } from '../api/client';
@@ -20,7 +21,7 @@ interface NodeState {
 export function Valider() {
   const setGraph = useGraphStore((st) => st.setGraph);
   const addFil = useGraphStore((st) => st.addFil);
-  const goTo = useGraphStore((st) => st.goTo);
+  const navigate = useNavigate();
 
   const [text, setText] = useState('');
   const [proposal, setProposal] = useState<GraphDto | null>(null);
@@ -64,7 +65,7 @@ export function Valider() {
       const graph = await api.confirm(validated);
       setGraph(graph);
       addFil({ kind: 'depot', text: `${keptNodes.length} racines validées` });
-      goTo('jardin');
+      navigate('/jardin');
     } catch (e) {
       setErr(e instanceof ApiError ? e.message : 'la fusion n’a pas pu se faire');
     } finally {

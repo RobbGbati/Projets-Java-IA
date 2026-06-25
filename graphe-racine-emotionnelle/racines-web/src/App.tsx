@@ -1,35 +1,32 @@
 /**
- * Routeur d'écrans. La carte vivante (Jardin) est toujours le fond ; les autres
- * écrans s'ouvrent en panneau doux par-dessus. « Demander » s'ouvre en panneau
- * latéral pour laisser voir le surlignage du sous-graphe dans la carte.
+ * Shell + routing. Chaque menu a son URL dédiée (/jardin, /deposer, …). La carte
+ * vivante (Jardin) reste le fond persistant — ce qui préserve le surlignage du
+ * sous-graphe et la révélation. Les autres menus s'ouvrent en panneau routé
+ * par-dessus. Nav en bas (NavLink).
  */
 import { useEffect } from 'react';
+import type { ReactNode } from 'react';
+import { NavLink, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import styles from './App.module.css';
 import { SkyProvider } from './sky/SkyContext';
 import { useGraphStore } from './store/useGraphStore';
-import type { Screen } from './store/useGraphStore';
 import { Garden } from './graph/Garden';
 import { Deposer } from './screens/Deposer';
 import { Demander } from './screens/Demander';
 import { Valider } from './screens/Valider';
 import { Fil } from './screens/Fil';
 
-const NAV: { id: Screen; label: string }[] = [
-  { id: 'jardin', label: 'le jardin' },
-  { id: 'deposer', label: 'déposer' },
-  { id: 'demander', label: 'demander' },
-  { id: 'valider', label: 'valider' },
-  { id: 'fil', label: 'le fil' },
+const NAV: { to: string; label: string }[] = [
+  { to: '/jardin', label: 'le jardin' },
+  { to: '/deposer', label: 'déposer' },
+  { to: '/demander', label: 'demander' },
+  { to: '/valider', label: 'valider' },
+  { to: '/fil', label: 'le fil' },
 ];
 
-function ScreenPanel() {
-  const screen = useGraphStore((s) => s.screen);
-  const goTo = useGraphStore((s) => s.goTo);
-  if (screen === 'jardin') return null;
-  if (screen === 'demander') return <Demander />;
-
-  const panel =
-    screen === 'deposer' ? <Deposer /> : screen === 'valider' ? <Valider /> : <Fil />;
+/** Panneau crème centré (Déposer/Valider/Fil), avec fermeture → Jardin. */
+function Panel({ children }: { children: ReactNode }) {
+  const navigate = useNavigate();
   return (
     <div className={styles.panel}>
       <div className={styles.panelInner}>
@@ -37,26 +34,26 @@ function ScreenPanel() {
           className={styles.closeBtn}
           aria-label="fermer cette carte"
           title="fermer"
-          onClick={() => goTo('jardin')}
+          onClick={() => navigate('/jardin')}
         >
           ✕
         </button>
-        {panel}
+        {children}
       </div>
     </div>
   );
 }
 
 function AppInner() {
-  const screen = useGraphStore((s) => s.screen);
-  const goTo = useGraphStore((s) => s.goTo);
   const loadGraph = useGraphStore((s) => s.loadGraph);
   const status = useGraphStore((s) => s.status);
+  const location = useLocation();
 
   useEffect(() => {
     void loadGraph();
   }, [loadGraph]);
 
+  const onJardin = location.pathname === '/jardin' || location.pathname === '/';
   const refreshing = status === 'loading';
 
   return (
@@ -65,7 +62,17 @@ function AppInner() {
         <Garden />
       </div>
 
-      {screen === 'jardin' && (
+      <Routes>
+        <Route path="/" element={<Navigate to="/jardin" replace />} />
+        <Route path="/jardin" element={null} />
+        <Route path="/deposer" element={<Panel><Deposer /></Panel>} />
+        <Route path="/valider" element={<Panel><Valider /></Panel>} />
+        <Route path="/fil" element={<Panel><Fil /></Panel>} />
+        <Route path="/demander" element={<Demander />} />
+        <Route path="*" element={<Navigate to="/jardin" replace />} />
+      </Routes>
+
+      {onJardin && (
         <button
           className={styles.refresh}
           onClick={() => void loadGraph()}
@@ -79,18 +86,15 @@ function AppInner() {
         </button>
       )}
 
-      <ScreenPanel />
-
       <nav className={styles.nav} aria-label="navigation principale">
         {NAV.map((n) => (
-          <button
-            key={n.id}
-            className={`${styles.navBtn} ${screen === n.id ? styles.active : ''}`}
-            aria-current={screen === n.id ? 'page' : undefined}
-            onClick={() => goTo(n.id)}
+          <NavLink
+            key={n.to}
+            to={n.to}
+            className={({ isActive }) => `${styles.navBtn} ${isActive ? styles.active : ''}`}
           >
             {n.label}
-          </button>
+          </NavLink>
         ))}
       </nav>
     </div>

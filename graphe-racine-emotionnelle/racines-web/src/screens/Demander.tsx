@@ -7,6 +7,7 @@
 import { useState } from 'react';
 import app from '../App.module.css';
 import s from './screens.module.css';
+import { useNavigate } from 'react-router-dom';
 import { Field, Invitation, SoftButton } from '../ui/primitives';
 import { useGraphStore } from '../store/useGraphStore';
 import { api, ApiError } from '../api/client';
@@ -17,7 +18,7 @@ export function Demander() {
   const clearHighlight = useGraphStore((st) => st.clearHighlight);
   const addFil = useGraphStore((st) => st.addFil);
   const setRevelation = useGraphStore((st) => st.setRevelation);
-  const goTo = useGraphStore((st) => st.goTo);
+  const navigate = useNavigate();
 
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState<string | null>(null);
@@ -52,6 +53,8 @@ export function Demander() {
       const root = roots[0];
       setRevelation(root);
       addFil({ kind: 'revelation', text: revelationPhrase(root) });
+      navigate('/jardin'); // la révélation se joue sur la carte
+
     } catch (e) {
       setErr(e instanceof ApiError ? e.message : 'la révélation n’a pas pu venir');
     } finally {
@@ -68,7 +71,7 @@ export function Demander() {
           title="fermer"
           onClick={() => {
             clearHighlight();
-            goTo('jardin');
+            navigate('/jardin');
           }}
         >
           ✕

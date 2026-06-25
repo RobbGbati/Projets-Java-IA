@@ -60,7 +60,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
 
   screen: 'jardin',
   selectedNodeId: null,
-  sky: 'ciel-paix',
+  sky: 'zenith',
   highlight: null,
   freshNodeIds: new Set(),
   fil: [],

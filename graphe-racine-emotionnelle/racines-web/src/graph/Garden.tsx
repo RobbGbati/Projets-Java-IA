@@ -37,12 +37,18 @@ export function Garden() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [t, setT] = useState<Transform>({ x: 0, y: 0, k: 1 });
+  // transform courant lisible dans les handlers de drag (évite les closures périmées)
+  const tRef = useRef(t);
+  tRef.current = t;
 
   // gestes : on suit les pointeurs actifs
   const gesture = useRef<{
     pointers: Map<number, { x: number; y: number }>;
     lastDist: number | null;
   }>({ pointers: new Map(), lastDist: null });
+
+  // drag d'un nœud (distinct du pan)
+  const drag = useRef<{ id: string; moved: boolean; sx: number; sy: number } | null>(null);
 
   // mesure du conteneur (responsive)
   useEffect(() => {
@@ -56,7 +62,50 @@ export function Garden() {
     return () => ro.disconnect();
   }, []);
 
-  const positions = useForceLayout(graph, size.w, size.h);
+  const layout = useForceLayout(graph, size.w, size.h);
+  const positions = layout.positions;
+
+  // pointeur écran → coordonnées monde (inverse du transform pan/zoom)
+  const toWorld = useCallback((clientX: number, clientY: number) => {
+    const rect = containerRef.current?.getBoundingClientRect();
+    const cur = tRef.current;
+    const px = clientX - (rect?.left ?? 0);
+    const py = clientY - (rect?.top ?? 0);
+    return { x: (px - cur.x) / cur.k, y: (py - cur.y) / cur.k };
+  }, []);
+
+  const onNodeDown = useCallback(
+    (id: string, e: React.PointerEvent) => {
+      e.stopPropagation(); // pas de pan
+      (e.currentTarget as Element).setPointerCapture(e.pointerId);
+      drag.current = { id, moved: false, sx: e.clientX, sy: e.clientY };
+      layout.dragStart(id);
+    },
+    [layout],
+  );
+
+  const onNodeMove = useCallback(
+    (e: React.PointerEvent) => {
+      const d = drag.current;
+      if (!d) return;
+      if (!d.moved && Math.hypot(e.clientX - d.sx, e.clientY - d.sy) > 4) d.moved = true;
+      const w = toWorld(e.clientX, e.clientY);
+      layout.dragMove(d.id, w.x, w.y);
+    },
+    [layout, toWorld],
+  );
+
+  const onNodeUp = useCallback(
+    (e: React.PointerEvent) => {
+      const d = drag.current;
+      if (!d) return;
+      layout.dragEnd();
+      if (!d.moved) selectNode(d.id); // simple clic = sélection
+      drag.current = null;
+      (e.currentTarget as Element).releasePointerCapture?.(e.pointerId);
+    },
+    [layout, selectNode],
+  );
 
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     // un clic sur un nœud (cercle) ne déclenche pas le pan
@@ -164,6 +213,9 @@ export function Garden() {
                 selected={n.id === selectedNodeId}
                 reduced={reduced}
                 onSelect={selectNode}
+                onNodeDown={onNodeDown}
+                onNodeMove={onNodeMove}
+                onNodeUp={onNodeUp}
               />
             );
           })}

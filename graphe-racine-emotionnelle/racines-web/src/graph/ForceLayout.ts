@@ -7,7 +7,7 @@
  * prefers-reduced-motion : alphaDecay élevé → la simulation se fige presque
  * instantanément (positions calculées sans mouvement perceptible).
  */
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   forceCenter,
   forceCollide,
@@ -28,11 +28,23 @@ type Link = SimulationLinkDatum<PositionedNode>;
 
 export type Positions = Record<string, { x: number; y: number }>;
 
+export interface Layout {
+  positions: Positions;
+  /** Début de drag : épingle le nœud et réchauffe la simulation. */
+  dragStart: (id: string) => void;
+  /** Drag en cours : déplace le nœud (coordonnées monde). */
+  dragMove: (id: string, x: number, y: number) => void;
+  /** Fin de drag : la simulation se calme (le nœud reste épinglé). */
+  dragEnd: () => void;
+  /** Libère un nœud épinglé (il rejoint la disposition). */
+  unpin: (id: string) => void;
+}
+
 export function useForceLayout(
   graph: GraphDto,
   width: number,
   height: number,
-): Positions {
+): Layout {
   const nodesRef = useRef<Map<string, PositionedNode>>(new Map());
   const simRef = useRef<Simulation<PositionedNode, Link> | null>(null);
   const [positions, setPositions] = useState<Positions>({});
@@ -88,5 +100,35 @@ export function useForceLayout(
     };
   }, [graph, width, height]);
 
-  return positions;
+  const dragStart = useCallback((id: string) => {
+    const n = nodesRef.current.get(id);
+    const sim = simRef.current;
+    if (!n || !sim) return;
+    n.fx = n.x ?? null;
+    n.fy = n.y ?? null;
+    sim.alphaTarget(0.3).restart();
+  }, []);
+
+  const dragMove = useCallback((id: string, x: number, y: number) => {
+    const n = nodesRef.current.get(id);
+    if (n) {
+      n.fx = x;
+      n.fy = y;
+    }
+  }, []);
+
+  const dragEnd = useCallback(() => {
+    simRef.current?.alphaTarget(0); // le nœud reste épinglé (fx/fy conservés)
+  }, []);
+
+  const unpin = useCallback((id: string) => {
+    const n = nodesRef.current.get(id);
+    if (n) {
+      n.fx = null;
+      n.fy = null;
+    }
+    simRef.current?.alphaTarget(0.1).restart();
+  }, []);
+
+  return { positions, dragStart, dragMove, dragEnd, unpin };
 }

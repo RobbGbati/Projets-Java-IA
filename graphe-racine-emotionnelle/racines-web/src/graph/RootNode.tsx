@@ -4,6 +4,7 @@
  * léger overshoot (spring). Atteignable au clavier, focusable, clic = son histoire.
  * Tout mouvement est coupé en reduced-motion.
  */
+import type { PointerEvent } from 'react';
 import { motion } from 'motion/react';
 import type { NodeDto } from '../api/types';
 import { NODE_LABELS } from '../api/types';
@@ -20,6 +21,9 @@ interface Props {
   selected: boolean;
   reduced: boolean;
   onSelect: (id: string) => void;
+  onNodeDown: (id: string, e: PointerEvent) => void;
+  onNodeMove: (e: PointerEvent) => void;
+  onNodeUp: (e: PointerEvent) => void;
 }
 
 export function RootNode({
@@ -32,6 +36,9 @@ export function RootNode({
   selected,
   reduced,
   onSelect,
+  onNodeDown,
+  onNodeMove,
+  onNodeUp,
 }: Props) {
   const color = nodeColor(node);
   const r = nodeRadius(node);
@@ -67,8 +74,10 @@ export function RootNode({
             tabIndex={0}
             role="button"
             aria-label={`${NODE_LABELS[node.type]} : ${node.label}`}
-            style={{ cursor: 'pointer', outline: 'none' }}
-            onClick={() => onSelect(node.id)}
+            style={{ cursor: 'grab', outline: 'none', touchAction: 'none' }}
+            onPointerDown={(e) => onNodeDown(node.id, e)}
+            onPointerMove={onNodeMove}
+            onPointerUp={onNodeUp}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();

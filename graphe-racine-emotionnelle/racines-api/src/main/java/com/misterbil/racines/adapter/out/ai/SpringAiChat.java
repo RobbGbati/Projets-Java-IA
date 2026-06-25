@@ -32,6 +32,9 @@ public class SpringAiChat implements ChatPort {
     public String generate(String system, String context, String question) {
         ChatModel model = models.getIfAvailable();
         if (model == null) return FALLBACK;   // IA désactivée
+        // Trace le fournisseur réellement utilisé pour ce chat (AnthropicChatModel,
+        // OllamaChatModel, OpenAiChatModel…) → on sait quel LLM répond à chaque appel.
+        log.info("Chat LLM : {}", model.getClass().getSimpleName());
         try {
             return ChatClient.create(model).prompt()
                     .system(system)

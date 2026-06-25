@@ -12,6 +12,7 @@ import com.misterbil.racines.domain.model.NodeRef;
 import com.misterbil.racines.domain.model.NodeType;
 import com.misterbil.racines.domain.model.SubGraph;
 import com.misterbil.racines.domain.port.out.GraphStorePort;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.data.neo4j.core.Neo4jClient;
 import org.springframework.stereotype.Repository;
@@ -42,6 +43,7 @@ import java.util.stream.StreamSupport;
 @Repository
 @ConditionalOnProperty(name = "racines.store", havingValue = "neo4j")
 @RequiredArgsConstructor
+@Slf4j
 public class Neo4jGraphStore implements GraphStorePort {
 
     static final String LABEL = "RacineNode";
@@ -51,6 +53,7 @@ public class Neo4jGraphStore implements GraphStorePort {
     // ---- lecture --------------------------------------------------------
     @Override
     public InnerGraph load() {
+        log.info("Loading graph from Neo4j");
         List<Node> nodes = client.query("""
                         MATCH (n:%s)
                         RETURN n.id AS id, n.type AS type, n.label AS label,

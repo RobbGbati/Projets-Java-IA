@@ -11,6 +11,7 @@ import com.misterbil.racines.domain.model.NodeRef;
 import com.misterbil.racines.domain.model.NodeType;
 import com.misterbil.racines.domain.model.SubGraph;
 import com.misterbil.racines.domain.port.out.GraphStorePort;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
@@ -34,6 +35,7 @@ import java.util.Set;
  */
 @Component
 @ConditionalOnProperty(name = "racines.store", havingValue = "inmemory", matchIfMissing = true)
+@Slf4j
 public class InMemoryGraphStore implements GraphStorePort {
 
     private final Map<NodeId, Node> nodes = new LinkedHashMap<>();
@@ -45,6 +47,7 @@ public class InMemoryGraphStore implements GraphStorePort {
 
     @Override
     public synchronized InnerGraph load() {
+        log.info("Loading graph from InMemory");
         return new InnerGraph(new ArrayList<>(nodes.values()), new ArrayList<>(edges));
     }
 

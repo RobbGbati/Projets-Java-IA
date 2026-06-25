@@ -1,13 +1,12 @@
 /**
  * Demander (SPEC §3, écran 4 · PRD US6/US7). Un champ unique. La réponse arrive
- * douce ; le sous-graphe concerné s'illumine dans le Jardin (le reste se désature).
- * Panneau latéral : la carte reste visible pendant la lecture.
- * Bouton « racine commune » → la séquence signature (Revelation).
+ * douce. Le sous-graphe pertinent est mémorisé et s'illumine quand on revient au
+ * Jardin. Bouton « racine commune » → la séquence signature (Revelation), jouée
+ * sur la carte.
  */
 import { useState } from 'react';
-import app from '../App.module.css';
-import s from './screens.module.css';
 import { useNavigate } from 'react-router-dom';
+import s from './screens.module.css';
 import { Field, Invitation, SoftButton } from '../ui/primitives';
 import { useGraphStore } from '../store/useGraphStore';
 import { api, ApiError } from '../api/client';
@@ -15,13 +14,13 @@ import { revelationPhrase } from '../api/types';
 
 export function Demander() {
   const highlightSubgraph = useGraphStore((st) => st.highlightSubgraph);
-  const clearHighlight = useGraphStore((st) => st.clearHighlight);
   const addFil = useGraphStore((st) => st.addFil);
   const setRevelation = useGraphStore((st) => st.setRevelation);
   const navigate = useNavigate();
 
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState<string | null>(null);
+  const [hasSubgraph, setHasSubgraph] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -33,6 +32,7 @@ export function Demander() {
       const res = await api.ask(question.trim());
       setAnswer(res.answer);
       highlightSubgraph(res.subgraph);
+      setHasSubgraph(res.subgraph.nodes.length > 0);
       addFil({ kind: 'question', text: question.trim() });
     } catch (e) {
       setErr(e instanceof ApiError ? e.message : 'la réponse n’a pas pu venir');
@@ -54,7 +54,6 @@ export function Demander() {
       setRevelation(root);
       addFil({ kind: 'revelation', text: revelationPhrase(root) });
       navigate('/jardin'); // la révélation se joue sur la carte
-
     } catch (e) {
       setErr(e instanceof ApiError ? e.message : 'la révélation n’a pas pu venir');
     } finally {
@@ -63,58 +62,42 @@ export function Demander() {
   };
 
   return (
-    <div className={`${app.panel} ${app.side}`}>
-      <div className={app.panelInner}>
-        <button
-          className={app.closeBtn}
-          aria-label="fermer cette carte"
-          title="fermer"
-          onClick={() => {
-            clearHighlight();
-            navigate('/jardin');
-          }}
-        >
-          ✕
-        </button>
-        <h2 className={s.title}>demander</h2>
-        <Invitation>pose ta question à tes racines — tu recevras une lumière, pas un verdict.</Invitation>
+    <div>
+      <h2 className={s.title}>demander</h2>
+      <Invitation>pose ta question à tes racines — tu recevras une lumière, pas un verdict.</Invitation>
 
-        <div style={{ marginTop: '1.2rem' }}>
-          <Field
-            label="ta question"
-            textarea
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder="qu'est-ce qui m'a apaisé quand j'étais en colère ?"
-          />
-          <div className={s.row}>
-            <SoftButton variant="accent" onClick={ask} disabled={busy}>
-              {busy ? 'la carte écoute…' : 'demander'}
-            </SoftButton>
-            <SoftButton variant="ghost" onClick={reveal} disabled={busy}>
-              une racine commune ?
-            </SoftButton>
-          </div>
+      <div style={{ marginTop: '1.2rem' }}>
+        <Field
+          label="ta question"
+          textarea
+          value={question}
+          onChange={(e) => setQuestion(e.target.value)}
+          placeholder="qu'est-ce qui m'a apaisé quand j'étais en colère ?"
+        />
+        <div className={s.row}>
+          <SoftButton variant="accent" onClick={ask} disabled={busy}>
+            {busy ? 'la carte écoute…' : 'demander'}
+          </SoftButton>
+          <SoftButton variant="ghost" onClick={reveal} disabled={busy}>
+            une racine commune ?
+          </SoftButton>
         </div>
-
-        {err && <p style={{ color: 'var(--corail)' }}>{err}</p>}
-
-        {answer && (
-          <>
-            <div className={s.answer}>{answer}</div>
-            <button
-              className={s.iconBtn}
-              style={{ marginTop: '0.6rem' }}
-              onClick={() => {
-                setAnswer(null);
-                clearHighlight();
-              }}
-            >
-              effacer le surlignage
-            </button>
-          </>
-        )}
       </div>
+
+      {err && <p style={{ color: 'var(--corail)' }}>{err}</p>}
+
+      {answer && (
+        <>
+          <div className={s.answer}>{answer}</div>
+          {hasSubgraph && (
+            <div className={s.row}>
+              <SoftButton variant="ghost" onClick={() => navigate('/jardin')}>
+                voir le sous-graphe dans le jardin
+              </SoftButton>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

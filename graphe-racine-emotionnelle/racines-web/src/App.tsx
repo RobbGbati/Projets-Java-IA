@@ -58,17 +58,13 @@ function AppInner() {
 
   return (
     <div className={styles.app}>
-      <div className={styles.backdrop}>
-        <Garden />
-      </div>
-
       <Routes>
         <Route path="/" element={<Navigate to="/jardin" replace />} />
-        <Route path="/jardin" element={null} />
+        <Route path="/jardin" element={<Garden />} />
         <Route path="/deposer" element={<Panel><Deposer /></Panel>} />
         <Route path="/valider" element={<Panel><Valider /></Panel>} />
         <Route path="/fil" element={<Panel><Fil /></Panel>} />
-        <Route path="/demander" element={<Demander />} />
+        <Route path="/demander" element={<Panel><Demander /></Panel>} />
         <Route path="*" element={<Navigate to="/jardin" replace />} />
       </Routes>
 

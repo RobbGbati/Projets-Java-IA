@@ -4,12 +4,6 @@
   overflow: hidden;
 }
 
-/* La carte vivante : toujours le fond, plein écran. */
-.backdrop {
-  position: absolute;
-  inset: 0;
-}
-
 /* Navigation flottante, douce, en bas (atteignable au pouce sur mobile). */
 .nav {
   position: absolute;
@@ -141,16 +135,6 @@
   .refreshSpin {
     animation: none;
   }
-}
-
-/* Demander : panneau latéral étroit, la carte reste visible (surlignage). */
-.side {
-  justify-content: flex-start;
-  padding: 1.5rem 1rem 6rem 1.5rem;
-}
-
-.side .panelInner {
-  width: min(380px, 100%);
 }
 
 .title {

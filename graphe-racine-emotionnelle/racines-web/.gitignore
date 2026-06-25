@@ -5,3 +5,7 @@ dist-ssr
 .DS_Store
 .vite
 *.tsbuildinfo
+# Playwright
+test-results/
+playwright-report/
+e2e/.cache/

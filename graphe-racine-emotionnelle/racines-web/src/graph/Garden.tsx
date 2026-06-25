@@ -11,6 +11,7 @@ import { useForceLayout } from './ForceLayout';
 import { RootEdge } from './RootEdge';
 import { RootNode } from './RootNode';
 import { Revelation } from './Revelation';
+import { Legend } from './Legend';
 import { useReducedMotion } from '../theme/motion';
 import { NODE_LABELS } from '../api/types';
 import type { NodeDto } from '../api/types';
@@ -168,6 +169,8 @@ export function Garden() {
           })}
         </g>
       </svg>
+
+      <Legend />
 
       {graph.nodes.length > 0 && (
         <span className={styles.zoomHint}>molette ou pince pour zoomer · glisser pour déplacer</span>

@@ -1,0 +1,171 @@
+.app {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* La carte vivante : toujours le fond, plein écran. */
+.backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+/* Navigation flottante, douce, en bas (atteignable au pouce sur mobile). */
+.nav {
+  position: absolute;
+  left: 50%;
+  bottom: max(1.2rem, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.3rem;
+  padding: 0.35rem;
+  background: var(--creme-translucide);
+  backdrop-filter: blur(8px);
+  border-radius: 999px;
+  box-shadow: var(--ombre-douce);
+  z-index: 20;
+}
+
+.navBtn {
+  font-family: var(--corps);
+  font-size: 0.92rem;
+  color: var(--encre-doux);
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: color var(--duree-courte) var(--ease-organique),
+    background var(--duree-courte) var(--ease-organique);
+}
+
+.navBtn:hover {
+  color: var(--encre);
+}
+
+.navBtn.active {
+  color: var(--encre);
+  background: var(--creme);
+}
+
+/* Panneau d'écran (Déposer/Valider/Fil) : surface crème centrée. */
+.panel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem 1rem 6rem;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.panelInner {
+  position: relative;
+  width: min(640px, 100%);
+  background: var(--creme-translucide);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  box-shadow: var(--ombre-douce);
+  padding: 2rem;
+}
+
+/* Fermer la carte d'un écran → retour au Jardin. */
+.closeBtn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  font-size: 1.1rem;
+  color: var(--encre-doux);
+  cursor: pointer;
+  transition: background var(--duree-courte) var(--ease-organique),
+    color var(--duree-courte) var(--ease-organique);
+}
+
+.closeBtn:hover {
+  background: rgba(92, 70, 48, 0.12);
+  color: var(--encre);
+}
+
+/* Réactualiser la carte (recharge depuis le backend). */
+.refresh {
+  position: absolute;
+  right: max(1.2rem, env(safe-area-inset-right));
+  bottom: calc(max(1.2rem, env(safe-area-inset-bottom)) + 3.6rem);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--corps);
+  font-size: 0.9rem;
+  color: var(--encre);
+  background: var(--creme-translucide);
+  backdrop-filter: blur(8px);
+  border: none;
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  box-shadow: var(--ombre-douce);
+  cursor: pointer;
+  z-index: 20;
+  transition: transform var(--duree-courte) var(--ease-organique);
+}
+
+.refresh:hover {
+  transform: translateY(-1px);
+}
+
+.refresh:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.refreshSpin {
+  display: inline-block;
+  animation: spin 1.1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .refreshSpin {
+    animation: none;
+  }
+}
+
+/* Demander : panneau latéral étroit, la carte reste visible (surlignage). */
+.side {
+  justify-content: flex-start;
+  padding: 1.5rem 1rem 6rem 1.5rem;
+}
+
+.side .panelInner {
+  width: min(380px, 100%);
+}
+
+.title {
+  margin: 0 0 0.3rem;
+  font-size: 1.6rem;
+  color: var(--encre);
+}
+
+.lede {
+  margin: 0 0 1.4rem;
+  color: var(--encre-doux);
+}
+
+@media (max-width: 560px) {
+  .panelInner {
+    padding: 1.4rem;
+  }
+}

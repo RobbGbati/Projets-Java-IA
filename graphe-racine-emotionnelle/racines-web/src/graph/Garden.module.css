@@ -1,0 +1,90 @@
+.garden {
+  position: absolute;
+  inset: 0;
+  touch-action: none; /* on gère pan/zoom nous-mêmes */
+}
+
+.svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+}
+
+.svg:active {
+  cursor: grabbing;
+}
+
+/* État (chargement / erreur / vide) — centré, doux. */
+.state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+.stateInner {
+  max-width: 28rem;
+}
+
+/* Panneau « l'histoire du nœud ». */
+.story {
+  position: absolute;
+  right: max(1.2rem, env(safe-area-inset-right));
+  top: 1.2rem;
+  width: min(320px, calc(100% - 2.4rem));
+  background: var(--creme-translucide);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: var(--ombre-douce);
+  padding: 1.3rem 1.4rem;
+  z-index: 15;
+}
+
+.storyType {
+  font-size: 0.82rem;
+  color: var(--encre-doux);
+  margin: 0 0 0.2rem;
+}
+
+.storyLabel {
+  font-family: var(--display);
+  font-size: 1.3rem;
+  color: var(--encre);
+  margin: 0 0 0.8rem;
+  line-height: 1.25;
+}
+
+.storyExtra {
+  font-size: 0.9rem;
+  color: var(--encre-doux);
+  margin: 0.2rem 0;
+}
+
+.storyClose {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--encre-doux);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.zoomHint {
+  position: absolute;
+  left: max(1.2rem, env(safe-area-inset-left));
+  top: 1.2rem;
+  font-size: 0.8rem;
+  color: var(--encre-doux);
+  background: var(--creme-translucide);
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  pointer-events: none;
+}

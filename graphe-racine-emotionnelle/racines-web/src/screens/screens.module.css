@@ -1,0 +1,154 @@
+.title {
+  margin: 0 0 0.3rem;
+  font-size: 1.6rem;
+  color: var(--encre);
+}
+
+.lede {
+  margin: 0 0 1.4rem;
+  color: var(--encre-doux);
+  line-height: 1.5;
+}
+
+.row {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 0.6rem;
+}
+
+/* sélecteur de ciel */
+.skies {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  margin: 0.2rem 0 1.4rem;
+}
+
+.skyChip {
+  font-family: var(--corps);
+  font-size: 0.88rem;
+  color: var(--encre);
+  background: var(--creme);
+  border: 1px solid rgba(92, 70, 48, 0.25);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  transition: all var(--duree-courte) var(--ease-organique);
+}
+
+.skyChip.on {
+  background: var(--terre-douce);
+  color: var(--creme);
+  border-color: var(--terre-douce);
+}
+
+/* grille des champs structurés */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 1rem;
+}
+
+@media (max-width: 520px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* réponse douce (Demander) */
+.answer {
+  margin-top: 1.4rem;
+  padding: 1.2rem 1.3rem;
+  background: var(--creme);
+  border-radius: 16px;
+  border-left: 3px solid var(--sauge);
+  line-height: 1.6;
+  color: var(--encre);
+  white-space: pre-wrap;
+}
+
+.muted {
+  color: var(--encre-doux);
+  font-size: 0.9rem;
+}
+
+/* propositions (Valider) */
+.proposal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 14px;
+  border: 1px solid rgba(92, 70, 48, 0.18);
+  margin-bottom: 0.6rem;
+  background: var(--creme);
+}
+
+.proposal.refused {
+  opacity: 0.45;
+}
+
+.propType {
+  font-size: 0.78rem;
+  color: var(--encre-doux);
+}
+
+.propLabel {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: var(--corps);
+  font-size: 1rem;
+  color: var(--encre);
+  border-bottom: 1px dashed transparent;
+}
+
+.propLabel:focus {
+  outline: none;
+  border-bottom-color: var(--racine-claire);
+}
+
+.propActions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.iconBtn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1.05rem;
+  color: var(--encre-doux);
+  padding: 0.2rem 0.4rem;
+  border-radius: 8px;
+}
+
+.iconBtn:hover {
+  background: rgba(92, 70, 48, 0.1);
+}
+
+/* le fil */
+.filItem {
+  padding: 0.9rem 0;
+  border-bottom: 1px solid rgba(92, 70, 48, 0.14);
+}
+
+.filWhen {
+  font-size: 0.78rem;
+  color: var(--encre-doux);
+}
+
+.filText {
+  margin: 0.2rem 0 0;
+  color: var(--encre);
+  line-height: 1.5;
+}
+
+.filKind {
+  font-family: var(--display);
+  font-style: italic;
+  color: var(--terre-douce);
+}

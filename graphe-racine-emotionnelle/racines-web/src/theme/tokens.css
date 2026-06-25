@@ -1,0 +1,81 @@
+/* ════════════════════════════════════════════════════════════════
+   Tokens « Les Racines » — palette de L'Atelier (SPEC §2).
+   Le corail est rare : réservé à la racine commune. C'est son poids.
+   ════════════════════════════════════════════════════════════════ */
+:root {
+  --terre-profonde: #3a2c1e; /* sol, fond des racines */
+  --terre-douce: #5c4630;    /* racines, branches */
+  --racine-claire: #8a6a44;  /* tracé des racines */
+  --sauge: #5a8f4e;          /* vie, émotion positive */
+  --ocre: #b98a2e;           /* tension */
+  --corail: #d85a30;         /* LA racine commune — accent rare */
+  --ciel-paix: #cfeaf1;      /* humeurs (varient selon le ciel) */
+  --creme: #faf4e8;          /* surfaces d'écriture */
+  --encre: #2b3326;          /* texte principal */
+
+  /* dérivés doux */
+  --creme-translucide: rgba(250, 244, 232, 0.92);
+  --encre-doux: rgba(43, 51, 38, 0.66);
+  --ombre-douce: 0 8px 30px rgba(58, 44, 30, 0.18);
+
+  /* typo */
+  --display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --corps: 'Spline Sans', system-ui, -apple-system, sans-serif;
+
+  /* mouvement (SPEC §4 : lent, organique) */
+  --ease-organique: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --duree-courte: 0.5s;
+  --duree-moyenne: 0.8s;
+  --duree-longue: 1.2s;
+
+  /* couleur de fond du ciel (pilotée par SkyContext) */
+  --ciel-fond: var(--ciel-paix);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--corps);
+  color: var(--encre);
+  background: var(--terre-profonde);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Sentence case partout, jamais de CAPS (SPEC §2). */
+h1,
+h2,
+h3 {
+  font-family: var(--display);
+  font-weight: 500;
+  letter-spacing: 0.005em;
+}
+
+/* Focus clavier visible (non négociable, PRD §3.8). */
+:focus-visible {
+  outline: 2px solid var(--ciel-paix);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* prefers-reduced-motion : on coupe les transitions/animations CSS globales.
+   Le JS lit aussi ce signal (theme/motion.ts) pour Motion/GSAP. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
